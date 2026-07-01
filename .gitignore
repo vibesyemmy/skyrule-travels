@@ -1,0 +1,8 @@
+*.pyc
+__pycache__/
+index_backup.html
+index_original.html
+drivelodge-core.css
+swiper.css
+lenis.css
+drivelodge.css
