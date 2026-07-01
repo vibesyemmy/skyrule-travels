@@ -41,6 +41,15 @@ import Hero from '../components/hero/Hero.astro';
   html.w-mod-js:not(.w-mod-ix) [data-w-id="d78fcd4d-9e32-d46a-c58c-1fd11d11f6fe"] {transform:translate3d(0,0,0) scale3d(1,1,1) rotateX(0) rotateY(0) rotateZ(0) skew(0,0);}
 }
 </style>
+
+<!-- Fluid root font-size scaling (from benchmark, missing from drivelodge.css) -->
+<style>
+html { font-size: 1.125rem; }
+@media screen and (max-width:1920px) { html { font-size: calc(0.625rem + 0.41666666666666674vw); } }
+@media screen and (max-width:1440px) { html { font-size: calc(0.5991091314031181rem + 0.4454342984409799vw); } }
+@media screen and (max-width:991px) { html { font-size: calc(0.758056640625rem + 0.390625vw); } }
+@media screen and (max-width:479px) { html { font-size: calc(0.7494769874476988rem + 0.8368200836820083vw); } }
+</style>
 </head>
 
 <body>
