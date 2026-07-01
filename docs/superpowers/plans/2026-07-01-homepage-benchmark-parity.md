@@ -316,7 +316,7 @@ Run:
 grep -c 'data-video-url' src/pages/index.astro
 grep -c 'openVideoLightbox' src/pages/index.astro
 ```
-Expected: `2` (the home-video anchor's attribute, plus the `querySelectorAll("[data-video-url]")` selector string in the script — `grep -c` counts matching lines, and these land on two separate lines) and `2` (function definition + call site) respectively.
+Expected: `3` for `data-video-url` (the home-video anchor's attribute, the `querySelectorAll("[data-video-url]")` selector string, and the `trigger.getAttribute("data-video-url")` call — three separate lines) and `2` for `openVideoLightbox` (function definition + call site).
 
 - [ ] **Step 5: Commit**
 
