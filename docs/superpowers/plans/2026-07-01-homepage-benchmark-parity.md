@@ -19,7 +19,7 @@
 
 **Context:** The current file uses different class names than benchmark (`hero-home_header-wrap` vs benchmark's `header-wrapper`/`header-text-wrap`/`max-width-hero`), is missing the body paragraph under the H1, is missing the "Story of Skyrule" video-CTA block, is missing the `home-products_icon-wrap` arrow icon on product cards, and references image files that don't exist (`/images/hero-mountains.webp` etc.) instead of the real files already present in `public/images` (confirmed via `ls public/images/`).
 
-- [ ] **Step 1: Confirm the gap (failing check)**
+- [x] **Step 1: Confirm the gap (failing check)**
 
 Run:
 ```bash
@@ -28,7 +28,7 @@ grep -c 'hero_text-wrap\|video-cta_lightbox\|home-products_icon-wrap\|Mountains 
 ```
 Expected: `0` (none of these benchmark markers exist in the current file yet)
 
-- [ ] **Step 2: Replace `src/components/hero/Hero.astro` entirely**
+- [x] **Step 2: Replace `src/components/hero/Hero.astro` entirely**
 
 ```astro
 ---
@@ -146,7 +146,7 @@ Expected: `0` (none of these benchmark markers exist in the current file yet)
 </header>
 ```
 
-- [ ] **Step 3: Verify the fix**
+- [x] **Step 3: Verify the fix**
 
 Run:
 ```bash
@@ -154,7 +154,7 @@ grep -c 'hero_text-wrap\|video-cta_lightbox\|home-products_icon-wrap\|Mountains 
 ```
 Expected: `5` (`home-products_icon-wrap` appears twice — once per product card — the other three markers appear once each, confirming all four gaps are closed)
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/components/hero/Hero.astro
@@ -172,7 +172,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 **Context:** `index.astro` currently jumps from `<Navbar />` straight to `section_fitter-cta` — the hero component is never rendered.
 
-- [ ] **Step 1: Confirm the gap (failing check)**
+- [x] **Step 1: Confirm the gap (failing check)**
 
 Run:
 ```bash
@@ -180,7 +180,7 @@ grep -c "components/hero/Hero.astro'\|<Hero />" src/pages/index.astro
 ```
 Expected: `0` (note: a plain `grep -n 'Hero'` would false-positive on existing `Process%20Hero` image filenames already in the file — use the precise pattern above)
 
-- [ ] **Step 2: Add the import**
+- [x] **Step 2: Add the import**
 
 In `src/pages/index.astro`, change:
 ```astro
@@ -200,7 +200,7 @@ import Hero from '../components/hero/Hero.astro';
 ---
 ```
 
-- [ ] **Step 3: Render the component**
+- [x] **Step 3: Render the component**
 
 Change:
 ```astro
@@ -217,7 +217,7 @@ to:
 <section data-theme="light" class="section_fitter-cta">
 ```
 
-- [ ] **Step 4: Verify the fix**
+- [x] **Step 4: Verify the fix**
 
 Run:
 ```bash
@@ -225,7 +225,7 @@ grep -n 'Navbar\|<Hero\|section_fitter-cta\|section_hero-home' src/pages/index.a
 ```
 Expected: `import Hero` line, then `<Navbar />`, then `<Hero />`, then `section_fitter-cta` — in that line-number order (Hero's own `section_hero-home` class lives inside `Hero.astro`, not `index.astro`, so it won't show here — that's expected).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/pages/index.astro
@@ -243,7 +243,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 **Context:** Benchmark's two video CTAs (hero's "Story of Skyrule" and the home-video section's "Watch Video") open a modal via Webflow's lightbox runtime, which isn't loaded in this project. `Hero.astro` (Task 1) already has `data-video-url` on its anchor. This task adds the matching attribute to the home-video section's anchor (currently `href="#"` with no target) and adds a small vanilla-JS modal to actually open a YouTube embed on click, matching the two real video URLs found in the benchmark source (`XXfufgp_Y9Q` for the hero video, `mQuQNDKXfR0` for home-video).
 
-- [ ] **Step 1: Confirm the gap (failing check)**
+- [x] **Step 1: Confirm the gap (failing check)**
 
 Run:
 ```bash
@@ -251,7 +251,7 @@ grep -c 'data-video-url' src/pages/index.astro
 ```
 Expected: `0`
 
-- [ ] **Step 2: Add `data-video-url` to the home-video anchor**
+- [x] **Step 2: Add `data-video-url` to the home-video anchor**
 
 In `src/pages/index.astro`, find this line (in the `section_home-video` block):
 ```astro
@@ -262,7 +262,7 @@ Change the anchor's `href="#"` to include the video URL:
 <header data-theme="dark" class="section_home-video"><div class="home-video_component"><div class="home-video_lightbox-wrapper"><a href="#" class="home-video_lightbox w-inline-block w-lightbox" data-video-url="https://www.youtube.com/watch?v=mQuQNDKXfR0"><div class="home-video_content">
 ```
 
-- [ ] **Step 3: Add the lightbox modal script**
+- [x] **Step 3: Add the lightbox modal script**
 
 In `src/pages/index.astro`, inside the existing bottom `<script>` block, after the "Mobile nav" block and before the closing `</script>` tag, add:
 
@@ -309,7 +309,7 @@ document.querySelectorAll("[data-video-url]").forEach((trigger) => {
 });
 ```
 
-- [ ] **Step 4: Verify the fix**
+- [x] **Step 4: Verify the fix**
 
 Run:
 ```bash
@@ -318,7 +318,7 @@ grep -c 'openVideoLightbox' src/pages/index.astro
 ```
 Expected: `3` for `data-video-url` (the home-video anchor's attribute, the `querySelectorAll("[data-video-url]")` selector string, and the `trigger.getAttribute("data-video-url")` call — three separate lines) and `2` for `openVideoLightbox` (function definition + call site).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/pages/index.astro
@@ -336,7 +336,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 **Context:** Diffing benchmark `style.css` (240,956 bytes) against `public/styles/drivelodge.css` (214,151 bytes) showed the gap is almost entirely explained already (Swiper/Lenis CSS loaded via CDN links, several blocks already duplicated inline in `index.astro`/`Hero.astro`). The one genuine, unaccounted-for gap: benchmark's root `html { font-size }` fluid scaling rule, which makes every `rem`-based size on the page scale with viewport width. It's absent from both `drivelodge.css` and `global.css`. Astro scopes `<style>` blocks per-page by default, so adding it as a page-local `<style>` in `index.astro` (next to the other "Page-Specific" blocks already there) won't leak into other pages that use a different, fixed rem scale in `global.css`.
 
-- [ ] **Step 1: Confirm the gap (failing check)**
+- [x] **Step 1: Confirm the gap (failing check)**
 
 Run:
 ```bash
@@ -344,7 +344,7 @@ grep -c 'html { font-size' src/pages/index.astro
 ```
 Expected: `0`
 
-- [ ] **Step 2: Add the rule**
+- [x] **Step 2: Add the rule**
 
 In `src/pages/index.astro`, find:
 ```astro
@@ -376,7 +376,7 @@ html { font-size: 1.125rem; }
 </style>
 ```
 
-- [ ] **Step 3: Verify the fix**
+- [x] **Step 3: Verify the fix**
 
 Run:
 ```bash
@@ -384,7 +384,7 @@ grep -c 'html { font-size' src/pages/index.astro
 ```
 Expected: `5` (base rule + 4 media-query overrides)
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/pages/index.astro
@@ -401,7 +401,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 **Context:** Tasks 1-4 closed every gap found during investigation. This task confirms the rendered result actually matches, both visually and behaviorally, per the "full behavior parity" scope agreed on.
 
-- [ ] **Step 1: Serve the benchmark branch statically for comparison**
+- [x] **Step 1: Serve the benchmark branch statically for comparison**
 
 ```bash
 cd /Users/opeyemiajagbe/Documents/Projects/skyrule-travels
@@ -410,7 +410,7 @@ cd /tmp/skyrule-benchmark && npx --yes serve -l 5050 .
 ```
 Expected: benchmark page now reachable at `http://localhost:5050`
 
-- [ ] **Step 2: Confirm the Astro dev server is running**
+- [x] **Step 2: Confirm the Astro dev server is running**
 
 Run (from the main repo):
 ```bash
@@ -418,7 +418,7 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:4321
 ```
 Expected: `200`. If not running, start it with `npm run dev` (background) as done earlier in this session.
 
-- [ ] **Step 3: Screenshot comparison at 3 breakpoints**
+- [x] **Step 3: Screenshot comparison at 3 breakpoints**
 
 Using the preview browser tooling available in your environment (or `npx playwright screenshot <url> <file>` as a fallback if the preview tool's server-start step fails), capture both `http://localhost:4321` and `http://localhost:5050` at:
 - Desktop: 1440x900
@@ -427,7 +427,7 @@ Using the preview browser tooling available in your environment (or `npx playwri
 
 Compare section by section in this order: navbar, hero (parallax layers + product cards), fitter-cta, featured (carousel), home-about, config-cta, home-video, build-cta, contact-cta, footer. Note any visual drift (spacing, image crop/sizing, font size, color) as a follow-up item — do not silently patch without confirming against the benchmark markup first.
 
-- [ ] **Step 4: Interaction checks**
+- [x] **Step 4: Interaction checks**
 
 On `http://localhost:4321`:
 1. Scroll past the hero — mountains/van/rocks parallax layers should move at different rates (GSAP `ScrollTrigger` targeting `.section_hero-home`).
@@ -437,14 +437,14 @@ On `http://localhost:4321`:
 5. In the `section_featured` product carousel, click the next/prev arrows — slides should advance; verify `disabled` state on the prev arrow at the start.
 6. Resize to a mobile width and click the nav hamburger — the menu should open/close.
 
-- [ ] **Step 5: Clean up the benchmark worktree**
+- [x] **Step 5: Clean up the benchmark worktree**
 
 ```bash
 cd /Users/opeyemiajagbe/Documents/Projects/skyrule-travels
 git worktree remove /tmp/skyrule-benchmark
 ```
 
-- [ ] **Step 6: Final commit (if Step 3/4 surfaced fixes)**
+- [x] **Step 6: Final commit (if Step 3/4 surfaced fixes)**
 
 Only if drift was found and fixed:
 ```bash
