@@ -1,101 +1,113 @@
 ---
-// Skyrule Hero — exact Drivelodge classes + structure
-// Parallax layers, hero content, product type cards inside
+// Skyrule Hero — literal benchmark structure/classes, Skyrule brand copy,
+// real asset filenames from public/images. Parallax layers are animated by
+// the global GSAP script at the bottom of index.astro (targets
+// [data-parallax-layer]), so no per-page script is duplicated here.
 ---
 <header data-theme="dark" class="section_hero-home">
-  <div class="code-embed-css w-embed">
-    <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.14/dist/lenis.css"/>
-    <style>
-      :root { --color-dark-rgb: 0, 0, 0; }
-      .parallax__fade { background: linear-gradient(to top, rgba(var(--color-dark-rgb), 1) 0%, rgba(var(--color-dark-rgb), 0.738) 19%, rgba(var(--color-dark-rgb), 0.541) 34%, rgba(var(--color-dark-rgb), 0.382) 47%, rgba(var(--color-dark-rgb), 0.278) 56.5%, rgba(var(--color-dark-rgb), 0.194) 65%, rgba(var(--color-dark-rgb), 0.126) 73%, rgba(var(--color-dark-rgb), 0.075) 80.2%, rgba(var(--color-dark-rgb), 0.042) 86.1%, rgba(var(--color-dark-rgb), 0.021) 91%, rgba(var(--color-dark-rgb), 0.008) 95.2%, rgba(var(--color-dark-rgb), 0.002) 98.2%, rgba(var(--color-dark-rgb), 0) 100%); }
-    </style>
-  </div>
-
-  <!-- Parallax visual layers -->
-  <section class="parallax__header">
-    <div class="parallax__visuals">
-      <div class="parallax__black-line-overflow"></div>
-      <div class="parallax__layers">
-        <img width="2880" data-parallax-layer="4" alt="" src="/images/hero-mountains.webp" loading="eager" class="parallax__layer-img"/>
-        <img width="800" data-parallax-layer="4" alt="" src="/images/hero-ground.webp" loading="eager" class="parallax__layer-img hide-tablet"/>
-        <img width="1200" data-parallax-layer="2" alt="" src="/images/hero-van.webp" loading="eager" class="parallax__layer-img is--van"/>
-      </div>
-    </div>
-    <div class="parallax__fade hide-tablet"></div>
-  </section>
-
-  <!-- Hero content + product cards -->
-  <section class="parallax__content">
-    <div class="padding-global">
-      <div class="container-large">
-        <div class="padding-section-large">
-          <div class="hero-home_content">
-            <div class="hero-home_header-wrap">
-              <div class="header-eyebrow-text">Skyrule — Raising the roof on standards.</div>
-              <h1 class="heading-style-h1">High Top &amp; Elevating Roof Conversions</h1>
-              <div class="spacer-medium"></div>
-              <div class="button-group">
-                <a href="/contact" class="button-wrap w-inline-block">
-                  <div class="button-content"><div class="button-layout"><div class="button-text">Get in touch</div></div></div>
-                </a>
-                <a href="/products" class="button-wrap is--alt w-inline-block">
-                  <div class="button-content"><div class="button-layout"><div class="button-text">Search by model</div></div></div>
-                </a>
+  <div class="parallax">
+    <section class="parallax__header">
+      <div class="parallax__visuals">
+        <div class="parallax__black-line-overflow"></div>
+        <div data-parallax-layers class="parallax__layers">
+          <img width="800" data-parallax-layer="1" alt="" src="images/67864fe46913e952168c7743_Mountains Back v2.webp" loading="eager" class="parallax__layer-img hide-tablet"/>
+          <img width="800" data-parallax-layer="2" alt="" src="images/67864feadafc51a78c7d9ba8_Van v2.webp" loading="eager" class="parallax__layer-img hide-tablet"/>
+          <div data-parallax-layer="3" class="parallax__layer-title">
+            <div class="padding-global">
+              <div class="container-large">
+                <div class="hero-home_content">
+                  <div class="padding-section-large is-hero-home">
+                    <div class="hero-home_component">
+                      <div class="max-width-hero">
+                        <div class="header-wrapper">
+                          <div class="header-text-wrap">
+                            <div class="header-top">
+                              <div class="header-eyebrow-text">Skyrule - Raising the roof on standards.</div>
+                              <h1 class="heading-style">High Top &amp; Elevating Roof Conversions</h1>
+                            </div>
+                            <div class="hero_text-wrap"><p class="body-text">We design, manufacture and install high-top and elevating roofs for camper van conversions — custom-built in the UK to fit the most popular van makes and models.</p></div>
+                          </div>
+                          <div class="button-group">
+                            <a href="/contact" class="button-wrap w-inline-block">
+                              <div class="button-content"><div class="button-layout"><div class="button-text">Get in touch</div>
+                                <div class="button-icon"><div class="icon-slot"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 17" fill="none"><g clip-path="url(#clip0_6401_1558)"><path d="M10.9541 3.45557L6.00455 3.49545L5.99226 5.02155L10.5927 4.98503L3.05492 12.5549L4.12551 13.6255L11.6959 6.02298L11.6583 10.6887L13.1844 10.6764L13.2249 5.72629C13.2282 5.11964 12.9913 4.5402 12.5657 4.11468C12.1402 3.68916 11.5608 3.45218 10.9541 3.45557Z" fill="currentColor"></path></g><defs><clippath id="clip0_6401_1558"><rect width="16" height="16" fill="currentColor" transform="translate(0 0.5)"></rect></clippath></defs></svg></div></div>
+                              </div></div>
+                            </a>
+                            <a href="/products" class="button-wrap w-inline-block">
+                              <div class="button-content"><div class="button-layout"><div class="button-text">Search by model</div>
+                                <div class="button-icon"><div class="icon-slot"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 17" fill="none"><g clip-path="url(#clip0_6401_1558)"><path d="M10.9541 3.45557L6.00455 3.49545L5.99226 5.02155L10.5927 4.98503L3.05492 12.5549L4.12551 13.6255L11.6959 6.02298L11.6583 10.6887L13.1844 10.6764L13.2249 5.72629C13.2282 5.11964 12.9913 4.5402 12.5657 4.11468C12.1402 3.68916 11.5608 3.45218 10.9541 3.45557Z" fill="currentColor"></path></g><defs><clippath id="clip0_6401_1558"><rect width="16" height="16" fill="currentColor" transform="translate(0 0.5)"></rect></clippath></defs></svg></div></div>
+                              </div></div>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="hero-home_video-wrapper">
+                        <a href="#" class="video-cta_lightbox w-inline-block w-lightbox" data-video-url="https://www.youtube.com/watch?v=XXfufgp_Y9Q">
+                          <div class="w-layout-grid video-cta_content">
+                            <div class="video-cta_text-wrap">
+                              <div class="text-size-regular">The Story of Skyrule</div>
+                              <div class="text-size-small opacity-70">Watch Video</div>
+                            </div>
+                            <div class="video-cta_icon-wrap"><div class="video-cta_icon-bg"><div class="video-cta_icon w-embed"><svg width="100%" height="100%" viewBox="0 0 9 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.1577 7.15773L0.0409546 13.4849V0.830566L8.1577 7.15773Z" fill="currentcolor"/></svg></div></div></div>
+                          </div>
+                          <div class="video-cta_image-wrap">
+                            <img sizes="100vw" srcset="images/677bc0530d77e0e618f27231_Process Hero-p-500.webp 500w, images/677bc0530d77e0e618f27231_Process Hero-p-800.webp 800w, images/677bc0530d77e0e618f27231_Process Hero-p-1080.webp 1080w, images/677bc0530d77e0e618f27231_Process Hero-p-1600.webp 1600w, images/677bc0530d77e0e618f27231_Process Hero-p-2000.webp 2000w, images/677bc0530d77e0e618f27231_Process Hero-p-2600.webp 2600w, images/677bc0530d77e0e618f27231_Process Hero.webp 2752w" alt="" loading="lazy" src="images/677bc0530d77e0e618f27231_Process Hero.webp" class="video-cta_image"/>
+                            <div class="video-cta_image-overlay"></div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="hero-home_button-wrap">
-              <a href="#" class="hero-home_lightbox-button w-inline-block w-lightbox">
-                <div class="hero-home_play-icon">
-                  <svg width="24" height="24" viewBox="0 0 16 17" fill="currentColor"><path d="M4 1l11 7.5L4 16V1z"/></svg>
+          </div>
+          <img width="800" data-parallax-layer="4" alt="" src="images/67864fe9da10c464db0c1771_Rocks:Ground v2.webp" loading="eager" class="parallax__layer-img hide-tablet"/>
+        </div>
+        <div class="parallax__fade hide-tablet"></div>
+      </div>
+    </section>
+    <section class="parallax__content">
+      <div class="padding-global">
+        <div class="container-large">
+          <div class="padding-section-large">
+            <div class="home-products_component">
+              <a data-theme="dark" href="/products?roof=Elevated+Roof" class="home-products_card w-inline-block">
+                <div class="home-products_content-top">
+                  <div class="home-products_text-wrap">
+                    <div class="home-products_header-wrap">
+                      <h2 class="home-product_header">Elevated Roof</h2>
+                      <div class="home-products_icon"><div>32</div></div>
+                    </div>
+                    <div class="home-products_body-wrap"><div class="text-size-regular">Browse our front and rear elevating roofs by make and model.</div></div>
+                  </div>
+                  <div class="home-products_icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 17" fill="none"><g clip-path="url(#clip0_6401_1558)"><path d="M10.9541 3.45557L6.00455 3.49545L5.99226 5.02155L10.5927 4.98503L3.05492 12.5549L4.12551 13.6255L11.6959 6.02298L11.6583 10.6887L13.1844 10.6764L13.2249 5.72629C13.2282 5.11964 12.9913 4.5402 12.5657 4.11468C12.1402 3.68916 11.5608 3.45218 10.9541 3.45557Z" fill="currentColor"></path></g><defs><clippath id="clip0_6401_1558"><rect width="16" height="16" fill="currentColor" transform="translate(0 0.5)"></rect></clippath></defs></svg></div>
                 </div>
-                <div class="hero-home_lightbox-text">
-                  <div>The Story of Skyrule</div>
-                  <div class="text-size-small">Watch Video</div>
+                <div class="home-products_image-wrap">
+                  <img src="images/677ba002665a743fe16806ae_Elevated Roof.webp" loading="lazy" alt="" sizes="(max-width: 1352px) 100vw, 1352px" srcset="images/677ba002665a743fe16806ae_Elevated Roof-p-500.webp 500w, images/677ba002665a743fe16806ae_Elevated Roof-p-800.webp 800w, images/677ba002665a743fe16806ae_Elevated Roof-p-1080.webp 1080w, images/677ba002665a743fe16806ae_Elevated Roof.webp 1352w" class="home-products_image"/>
+                  <div class="home-products_image-overlay"></div>
+                </div>
+              </a>
+              <a data-theme="dark" href="/products?roof=High+Top+Roof" class="home-products_card w-inline-block">
+                <div class="home-products_content-top">
+                  <div class="home-products_text-wrap">
+                    <div class="home-products_header-wrap">
+                      <h2 class="home-product_header">High-top Roof</h2>
+                      <div class="home-products_icon"><div>12</div></div>
+                    </div>
+                    <div class="home-products_body-wrap"><div class="text-size-regular">Browse high top roof conversions by make and model.</div></div>
+                  </div>
+                  <div class="home-products_icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 17" fill="none"><g clip-path="url(#clip0_6401_1558)"><path d="M10.9541 3.45557L6.00455 3.49545L5.99226 5.02155L10.5927 4.98503L3.05492 12.5549L4.12551 13.6255L11.6959 6.02298L11.6583 10.6887L13.1844 10.6764L13.2249 5.72629C13.2282 5.11964 12.9913 4.5402 12.5657 4.11468C12.1402 3.68916 11.5608 3.45218 10.9541 3.45557Z" fill="currentColor"></path></g><defs><clippath id="clip0_6401_1558"><rect width="16" height="16" fill="currentColor" transform="translate(0 0.5)"></rect></clippath></defs></svg></div>
+                </div>
+                <div class="home-products_image-wrap">
+                  <img src="images/678a3c3f728be60c99b89609_High-top Roof.webp" loading="lazy" alt="" sizes="(max-width: 1352px) 100vw, 1352px" srcset="images/678a3c3f728be60c99b89609_High-top Roof-p-500.webp 500w, images/678a3c3f728be60c99b89609_High-top Roof-p-800.webp 800w, images/678a3c3f728be60c99b89609_High-top Roof-p-1080.webp 1080w, images/678a3c3f728be60c99b89609_High-top Roof.webp 1352w" class="home-products_image"/>
+                  <div class="home-products_image-overlay"></div>
                 </div>
               </a>
             </div>
           </div>
-
-          <!-- Product type cards — inside hero -->
-          <div class="home-products_component">
-            <a href="/products?roof=Elevated+Roof" class="home-products_card w-inline-block">
-              <div class="home-products_content-top">
-                <div class="home-products_text-wrap">
-                  <div class="home-products_header-wrap">
-                    <h2 class="home-product_header">Elevated Roof</h2>
-                    <div class="home-products_icon"><div>32</div></div>
-                  </div>
-                  <div class="home-products_body-wrap">
-                    <div class="text-size-regular">Browse our front and rear elevating roofs by make and model.</div>
-                  </div>
-                </div>
-              </div>
-              <div class="home-products_image-wrap">
-                <img src="/images/elevated-roof.webp" loading="lazy" alt="" class="home-products_image"/>
-                <div class="home-products_image-overlay"></div>
-              </div>
-            </a>
-            <a href="/products?roof=High+Top+Roof" class="home-products_card w-inline-block">
-              <div class="home-products_content-top">
-                <div class="home-products_text-wrap">
-                  <div class="home-products_header-wrap">
-                    <h2 class="home-product_header">High-top Roof</h2>
-                    <div class="home-products_icon"><div>12</div></div>
-                  </div>
-                  <div class="home-products_body-wrap">
-                    <div class="text-size-regular">Browse high top roof conversions by make and model.</div>
-                  </div>
-                </div>
-              </div>
-              <div class="home-products_image-wrap">
-                <img src="/images/high-top-roof.webp" loading="lazy" alt="" class="home-products_image"/>
-                <div class="home-products_image-overlay"></div>
-              </div>
-            </a>
-          </div>
-
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </header>
