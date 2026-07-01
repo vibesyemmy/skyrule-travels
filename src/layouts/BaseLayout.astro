@@ -1,0 +1,99 @@
+---
+// Skyrule — Base Layout
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <title>Skyrule — Premium Camper Van Roof Conversions</title>
+  <meta name="description" content="Skyrule designs, manufactures, and installs premium elevating roofs for camper van conversions. Built in the UK." />
+  <meta property="og:title" content="Skyrule — Premium Camper Van Roof Conversions" />
+  <meta property="og:description" content="Skyrule designs, manufactures, and installs premium elevating roofs for camper van conversions." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+</head>
+<body class="min-h-screen">
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur-sm border-b border-neutral-100">
+  <div class="container section-px flex items-center justify-between h-[72px]">
+    <a href="/" class="text-xl font-bold tracking-tight shrink-0">SKYRULE</a>
+
+    <div class="hidden lg:flex items-center gap-1">
+      <div class="relative group">
+        <button class="flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">
+          Products
+          <svg class="w-3 h-3 opacity-40" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <a href="/about" class="px-4 py-2 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">Our Process</a>
+      <a href="/about" class="px-4 py-2 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">About Us</a>
+      <a href="/find-a-fitter" class="px-4 py-2 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">Find a Fitter</a>
+      <a href="/contact" class="px-4 py-2 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">Get in Touch</a>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a href="/contact" class="hidden sm:inline-flex btn btn-outline-dark border-transparent hover:bg-neutral-50">Contact</a>
+      <a href="/configurator" class="btn btn-primary text-sm">Configure ↗</a>
+      <button class="lg:hidden p-2 -mr-2" aria-label="Menu" id="menu-btn">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<slot />
+
+<!-- FOOTER -->
+<footer class="bg-black text-white pt-20 pb-10 section-px">
+  <div class="container grid grid-cols-2 md:grid-cols-4 gap-10 mb-16">
+    <div>
+      <h4 class="text-lg font-semibold mb-4">Skyrule</h4>
+      <p class="text-sm text-neutral-200 leading-relaxed">Premium camper van roof conversions. Built in the UK since 1994.</p>
+    </div>
+    <div>
+      <h4 class="text-lg font-semibold mb-4">Pages</h4>
+      <ul class="space-y-2.5 text-sm text-neutral-200">
+        <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
+        <li><a href="/products" class="hover:text-white transition-colors">Products</a></li>
+        <li><a href="/about" class="hover:text-white transition-colors">About Us</a></li>
+        <li><a href="/contact" class="hover:text-white transition-colors">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-lg font-semibold mb-4">Products</h4>
+      <ul class="space-y-2.5 text-sm text-neutral-200">
+        <li><a href="/products" class="hover:text-white transition-colors">Elevated Roof</a></li>
+        <li><a href="/products" class="hover:text-white transition-colors">High-Top Roof</a></li>
+        <li><a href="/configurator" class="hover:text-white transition-colors">Configurator</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-lg font-semibold mb-4">Contact</h4>
+      <ul class="space-y-2.5 text-sm">
+        <li><a href="tel:01535637777" class="text-white font-medium hover:underline">01535 637777</a></li>
+        <li><a href="mailto:sales@skyrule.co.uk" class="text-white font-medium hover:underline">sales@skyrule.co.uk</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container pt-8 border-t border-neutral-500/20 flex flex-wrap justify-between gap-4 text-sm text-neutral-300">
+    <p>&copy; {new Date().getFullYear()} Skyrule. All rights reserved.</p>
+    <div class="flex gap-6">
+      <a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a>
+      <a href="/cookies" class="hover:text-white transition-colors">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menu-btn')?.addEventListener('click', () => {
+    document.getElementById('mobile-menu')?.classList.toggle('hidden');
+  });
+</script>
+</body>
+</html>

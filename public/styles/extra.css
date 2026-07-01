@@ -1,0 +1,7 @@
+@media (min-width:992px) {html.w-mod-js:not(.w-mod-ix) [data-w-id="d78fcd4d-9e32-d46a-c58c-1fd11d11f6f8"] {background-color:rgb(234,238,241);}html.w-mod-js:not(.w-mod-ix) [data-w-id="d78fcd4d-9e32-d46a-c58c-1fd11d11f6fe"] {-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);}}
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -o-font-smoothing: antialiased;
+  -webkit-appearance:none;
+}
