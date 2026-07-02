@@ -9,6 +9,8 @@
 // where one exists (size="large", variant="brand", layout="normal" are
 // attribute-only and render identically to the unset state).
 // Dark/light theming comes from ancestor data-theme wrappers, not from props.
+// Template is deliberately ONE line — reformatting adds whitespace text nodes
+// that diverge from the benchmark DOM and are invisible to the diff tooling.
 interface Props {
   href: string;
   label: string;
