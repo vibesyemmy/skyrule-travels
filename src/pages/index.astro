@@ -29,7 +29,7 @@ import Footer from '../components/footer/Footer.astro';
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/>
 
 <!-- Font smoothing (from benchmark) -->
-<!-- Intentionally duplicates the font-smoothing rule in src/styles/global.css — this page doesn't load that file, and this block must stay byte-for-byte benchmark-verbatim. Keep both in sync if either changes. -->
+<!-- Inlined since this page doesn't use BaseLayout.astro — must stay byte-for-byte benchmark-verbatim. -->
 <style is:global>*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-o-font-smoothing:antialiased;-webkit-appearance:none}</style>
 <style is:global>.video-cta_lightbox .lenis.lenis-smooth iframe{pointer-events:auto}</style>
 
