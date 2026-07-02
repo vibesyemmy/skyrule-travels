@@ -1,6 +1,7 @@
 ---
 // Skyrule — Base Layout
-import "../styles/global.css";
+import Navbar from "../components/nav/Navbar.astro";
+import Footer from "../components/footer/Footer.astro";
 ---
 
 <!doctype html>
@@ -15,85 +16,60 @@ import "../styles/global.css";
   <meta property="og:description" content="Skyrule designs, manufactures, and installs premium elevating roofs for camper van conversions." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="stylesheet" href="/styles/drivelodge.css"/>
+
+  <!-- Fluid root font-size scaling (from benchmark, missing from drivelodge.css) -->
+  <style is:global>
+  html { font-size: 1.125rem; }
+  @media screen and (max-width:1920px) { html { font-size: calc(0.625rem + 0.41666666666666674vw); } }
+  @media screen and (max-width:1440px) { html { font-size: calc(0.5991091314031181rem + 0.4454342984409799vw); } }
+  @media screen and (max-width:991px) { html { font-size: calc(0.758056640625rem + 0.390625vw); } }
+  @media screen and (max-width:479px) { html { font-size: calc(0.7494769874476988rem + 0.8368200836820083vw); } }
+  </style>
+
+  <!-- Webflow utility classes (from benchmark) — Navbar depends on .hide/.hide-tablet for responsive show/hide -->
+  <style is:global>
+  body *{color:inherit}a,.w-input,.w-select,.w-tab-link,.w-nav-link,.w-slider-arrow-left,.w-slider-arrow-right,.w-dropdown-btn,.w-dropdown-toggle,.w-dropdown-link{color:inherit;text-decoration:inherit;font-size:inherit}
+  *[tabindex]:focus-visible,input[type="file"]:focus-visible{outline:.125rem solid #4d65ff;outline-offset:.125rem}
+  .w-richtext>:not(div):first-child,.w-richtext>div:first-child>:first-child{margin-top:0!important}
+  .w-richtext>:last-child,.w-richtext ol li:last-child,.w-richtext ul li:last-child{margin-bottom:0!important}
+  .pointer-events-off{pointer-events:none}.pointer-events-on{pointer-events:auto}
+  .div-square::after{content:"";display:block;padding-bottom:100%}
+  .container-medium,.container-small,.container-large{margin-right:auto!important;margin-left:auto!important}
+  .text-style-3lines{display:-webkit-box;overflow:hidden;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+  .text-style-2lines{display:-webkit-box;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .display-inlineflex{display:inline-flex}
+  .hide{display:none!important}
+  @media screen and (max-width:991px){.hide,.hide-tablet{display:none!important}}
+  @media screen and (max-width:767px){.hide-mobile-landscape{display:none!important}}
+  @media screen and (max-width:479px){.hide-mobile{display:none!important}}
+  .margin-0{margin:0!important}.padding-0{padding:0!important}.spacing-clean{padding:0!important;margin:0!important}
+  .margin-top{margin-right:0!important;margin-bottom:0!important;margin-left:0!important}
+  .padding-top{padding-right:0!important;padding-bottom:0!important;padding-left:0!important}
+  .margin-right{margin-top:0!important;margin-bottom:0!important;margin-left:0!important}
+  .padding-right{padding-top:0!important;padding-bottom:0!important;padding-left:0!important}
+  .margin-bottom{margin-top:0!important;margin-right:0!important;margin-left:0!important}
+  .padding-bottom{padding-top:0!important;padding-right:0!important;padding-left:0!important}
+  .margin-left{margin-top:0!important;margin-right:0!important;margin-bottom:0!important}
+  .padding-left{padding-top:0!important;padding-right:0!important;padding-bottom:0!important}
+  .margin-horizontal{margin-top:0!important;margin-bottom:0!important}
+  .padding-horizontal{padding-top:0!important;padding-bottom:0!important}
+  .margin-vertical{margin-right:0!important;margin-left:0!important}
+  .padding-vertical{padding-right:0!important;padding-left:0!important}
+  .spacing-clean{padding:0!important;margin:0!important}
+  </style>
 </head>
-<body class="min-h-screen">
+<body>
 
-<!-- NAVBAR -->
-<nav class="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur-sm border-b border-neutral-100">
-  <div class="container section-px flex items-center justify-between h-[72px]">
-    <a href="/" class="text-xl font-bold tracking-tight shrink-0">SKYRULE</a>
+<main class="main-wrapper"><div class="scroll-wrapper">
 
-    <div class="hidden lg:flex items-center gap-1">
-      <div class="relative group">
-        <button class="flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">
-          Products
-          <svg class="w-3 h-3 opacity-40" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-        </button>
-      </div>
-      <a href="/about" class="px-4 py-2 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">Our Process</a>
-      <a href="/about" class="px-4 py-2 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">About Us</a>
-      <a href="/find-a-fitter" class="px-4 py-2 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">Find a Fitter</a>
-      <a href="/contact" class="px-4 py-2 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">Get in Touch</a>
-    </div>
+<Navbar />
 
-    <div class="flex items-center gap-3">
-      <a href="/contact" class="hidden sm:inline-flex btn btn-outline-dark border-transparent hover:bg-neutral-50">Contact</a>
-      <a href="/configurator" class="btn btn-primary text-sm">Configure ↗</a>
-      <button class="lg:hidden p-2 -mr-2" aria-label="Menu" id="menu-btn">
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
-    </div>
-  </div>
-</nav>
-
-<!-- PAGE CONTENT -->
 <slot />
 
-<!-- FOOTER -->
-<footer class="bg-black text-white pt-20 pb-10 section-px">
-  <div class="container grid grid-cols-2 md:grid-cols-4 gap-10 mb-16">
-    <div>
-      <h4 class="text-lg font-semibold mb-4">Skyrule</h4>
-      <p class="text-sm text-neutral-200 leading-relaxed">Premium camper van roof conversions. Built in the UK since 1994.</p>
-    </div>
-    <div>
-      <h4 class="text-lg font-semibold mb-4">Pages</h4>
-      <ul class="space-y-2.5 text-sm text-neutral-200">
-        <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
-        <li><a href="/products" class="hover:text-white transition-colors">Products</a></li>
-        <li><a href="/about" class="hover:text-white transition-colors">About Us</a></li>
-        <li><a href="/contact" class="hover:text-white transition-colors">Contact</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4 class="text-lg font-semibold mb-4">Products</h4>
-      <ul class="space-y-2.5 text-sm text-neutral-200">
-        <li><a href="/products" class="hover:text-white transition-colors">Elevated Roof</a></li>
-        <li><a href="/products" class="hover:text-white transition-colors">High-Top Roof</a></li>
-        <li><a href="/configurator" class="hover:text-white transition-colors">Configurator</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4 class="text-lg font-semibold mb-4">Contact</h4>
-      <ul class="space-y-2.5 text-sm">
-        <li><a href="tel:01535637777" class="text-white font-medium hover:underline">01535 637777</a></li>
-        <li><a href="mailto:sales@skyrule.co.uk" class="text-white font-medium hover:underline">sales@skyrule.co.uk</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="container pt-8 border-t border-neutral-500/20 flex flex-wrap justify-between gap-4 text-sm text-neutral-300">
-    <p>&copy; {new Date().getFullYear()} Skyrule. All rights reserved.</p>
-    <div class="flex gap-6">
-      <a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a>
-      <a href="/cookies" class="hover:text-white transition-colors">Cookie Policy</a>
-    </div>
-  </div>
-</footer>
+</div></main>
+<Footer />
 
-<script>
-  document.getElementById('menu-btn')?.addEventListener('click', () => {
-    document.getElementById('mobile-menu')?.classList.toggle('hidden');
-  });
-</script>
 </body>
 </html>
