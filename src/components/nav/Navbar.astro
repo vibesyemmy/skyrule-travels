@@ -1,6 +1,7 @@
 ---
 // Navbar — exact benchmark markup from drivelodge.co.uk
 // Depends on: /styles/drivelodge.css or style.css
+import Button from '../button/Button.astro';
 ---
 
 <style>
@@ -38,20 +39,7 @@
           <div class="navbar_dropdown-wrapper">
             <div id="w-node-_1ccc432c-d407-68e2-d573-c70538b5b9d5-f8430e31" class="navbar_dropdown-top">
               <div class="text-size-medium">Drivelodge Products
-              </div><a data-wf--button--size="small" href="/products" class="button-wrap w-variant-0fa6310e-3b03-4614-cc31-5599b3d7993a w-inline-block">
-              <div data-wf--button-style--style="link" class="button-content w-variant-16fb8767-26f4-a35f-edd9-ba91eadcd66c">
-                <div data-wf--button-layout--layout="reversed" class="button-layout w-variant-b2abb149-0ec9-15b2-b963-49640b0e39dc">
-                  <div class="button-text">All products
-                  </div>
-                  <div class="button-icon">
-                    <div class="icon-slot">
-                      <div class="icon-slot"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 17" fill="none"><g clip-path="url(#clip0_6401_1558)"><path d="M10.9541 3.45557L6.00455 3.49545L5.99226 5.02155L10.5927 4.98503L3.05492 12.5549L4.12551 13.6255L11.6959 6.02298L11.6583 10.6887L13.1844 10.6764L13.2249 5.72629C13.2282 5.11964 12.9913 4.5402 12.5657 4.11468C12.1402 3.68916 11.5608 3.45218 10.9541 3.45557Z" fill="currentColor"></path></g><defs><clippath id="clip0_6401_1558"><rect width="16" height="16" fill="currentColor" transform="translate(0 0.5)"></rect></clippath></defs></svg>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              </a>
+              </div><Button href="/products" label="All products" variant="link" size="small" layout="reversed" />
             </div><a data-theme="dark" href="/products?roof=Elevated+Roof" class="home-products_card small w-inline-block">
             <div class="home-products_content-top small-2">
               <div class="home-products_text-wrap small-3">
@@ -124,33 +112,7 @@
       <div class="navbar_link-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 17" fill="none"><g clip-path="url(#clip0_6401_1558)"><path d="M10.9541 3.45557L6.00455 3.49545L5.99226 5.02155L10.5927 4.98503L3.05492 12.5549L4.12551 13.6255L11.6959 6.02298L11.6583 10.6887L13.1844 10.6764L13.2249 5.72629C13.2282 5.11964 12.9913 4.5402 12.5657 4.11468C12.1402 3.68916 11.5608 3.45218 10.9541 3.45557Z" fill="currentColor"></path></g><defs><clippath id="clip0_6401_1558"><rect width="16" height="16" fill="currentColor" transform="translate(0 0.5)"></rect></clippath></defs></svg>
       </div>
       </a>
-      <div class="navbar_button-group hide-desktop"><a data-wf--button--size="large" href="/contact" class="button-wrap w-inline-block">
-        <div data-wf--button-style--style="secondary" class="button-content w-variant-a1ef9764-3803-38f9-aea9-55b770b8a820">
-          <div data-wf--button-layout--layout="normal" class="button-layout">
-            <div class="button-text">Contact
-            </div>
-            <div class="button-icon">
-              <div class="icon-slot">
-                <div class="icon-slot"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 17" fill="none"><g clip-path="url(#clip0_6401_1558)"><path d="M10.9541 3.45557L6.00455 3.49545L5.99226 5.02155L10.5927 4.98503L3.05492 12.5549L4.12551 13.6255L11.6959 6.02298L11.6583 10.6887L13.1844 10.6764L13.2249 5.72629C13.2282 5.11964 12.9913 4.5402 12.5657 4.11468C12.1402 3.68916 11.5608 3.45218 10.9541 3.45557Z" fill="currentColor"></path></g><defs><clippath id="clip0_6401_1558"><rect width="16" height="16" fill="currentColor" transform="translate(0 0.5)"></rect></clippath></defs></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </a><a data-wf--button--size="large" href="/configurator" class="button-wrap w-inline-block">
-        <div data-wf--button-style--style="brand" class="button-content">
-          <div data-wf--button-layout--layout="normal" class="button-layout">
-            <div class="button-text">Configure
-            </div>
-            <div class="button-icon">
-              <div class="icon-slot">
-                <div class="icon-slot"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 17" fill="none"><g clip-path="url(#clip0_6401_1558)"><path d="M10.9541 3.45557L6.00455 3.49545L5.99226 5.02155L10.5927 4.98503L3.05492 12.5549L4.12551 13.6255L11.6959 6.02298L11.6583 10.6887L13.1844 10.6764L13.2249 5.72629C13.2282 5.11964 12.9913 4.5402 12.5657 4.11468C12.1402 3.68916 11.5608 3.45218 10.9541 3.45557Z" fill="currentColor"></path></g><defs><clippath id="clip0_6401_1558"><rect width="16" height="16" fill="currentColor" transform="translate(0 0.5)"></rect></clippath></defs></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </a>
+      <div class="navbar_button-group hide-desktop"><Button href="/contact" label="Contact" variant="secondary" size="large" layout="normal" /><Button href="/configurator" label="Configure" variant="brand" size="large" layout="normal" />
       </div>
     </nav>
     <div id="w-node-fcf2e40a-1087-535f-cfd6-869cf8430e56-f8430e31" class="navbar_button-wrapper">
@@ -167,28 +129,8 @@
         </div>
       </article>
       <div class="button-group hide-tablet">
-        <div class="javascript---config---close-warning"><a data-wf--button--size="small" href="/contact" class="button-wrap w-variant-0fa6310e-3b03-4614-cc31-5599b3d7993a w-inline-block">
-          <div data-wf--button-style--style="tertiary" class="button-content w-variant-ae85fb8f-012c-37ad-3f72-31aeb5a8a9de">
-            <div data-wf--button-layout--layout="normal" class="button-layout">
-              <div class="button-text">Contact
-              </div>
-            </div>
-          </div>
-          </a>
-        </div><a data-wf--button--size="small" href="/configurator" class="button-wrap w-variant-0fa6310e-3b03-4614-cc31-5599b3d7993a w-inline-block">
-        <div data-wf--button-style--style="brand" class="button-content">
-          <div data-wf--button-layout--layout="normal" class="button-layout">
-            <div class="button-text">Configure
-            </div>
-            <div class="button-icon">
-              <div class="icon-slot">
-                <div class="icon-slot"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 17" fill="none"><g clip-path="url(#clip0_6401_1558)"><path d="M10.9541 3.45557L6.00455 3.49545L5.99226 5.02155L10.5927 4.98503L3.05492 12.5549L4.12551 13.6255L11.6959 6.02298L11.6583 10.6887L13.1844 10.6764L13.2249 5.72629C13.2282 5.11964 12.9913 4.5402 12.5657 4.11468C12.1402 3.68916 11.5608 3.45218 10.9541 3.45557Z" fill="currentColor"></path></g><defs><clippath id="clip0_6401_1558"><rect width="16" height="16" fill="currentColor" transform="translate(0 0.5)"></rect></clippath></defs></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </a>
+        <div class="javascript---config---close-warning"><Button href="/contact" label="Contact" variant="tertiary" size="small" layout="normal" icon={false} />
+        </div><Button href="/configurator" label="Configure" variant="brand" size="small" layout="normal" />
       </div>
     </div>
   </div>
