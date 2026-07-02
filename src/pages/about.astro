@@ -3,6 +3,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Button from "../components/button/Button.astro";
 ---
 <BaseLayout>
+  <!-- Page background: the fixed footer sits behind the content sheet (reveal effect);
+       homepage sections each paint their own background, this page's placeholder
+       sections don't — so paint the sheet white here. Ships on /about only. -->
+  <style is:global>.scroll-wrapper { background-color: var(--background-color--background-primary); }</style>
   <section class="padding-global"><div class="container-large"><div class="padding-section-large">
     <h1 class="heading-style-h1">About</h1>
     <p class="body-text">Coming soon.</p>
