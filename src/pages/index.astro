@@ -51,6 +51,21 @@ html { font-size: 1.125rem; }
 @media screen and (max-width:991px) { html { font-size: calc(0.758056640625rem + 0.390625vw); } }
 @media screen and (max-width:479px) { html { font-size: calc(0.7494769874476988rem + 0.8368200836820083vw); } }
 </style>
+
+<!-- Navbar scroll effect: 80% black + blur backdrop once scrolled past the top -->
+<style is:global>
+.navbar_background {
+  background-color: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition: background-color 0.3s ease, backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease;
+}
+.navbar_component.is-scrolled .navbar_background {
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+</style>
 </head>
 
 <body>
@@ -209,6 +224,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+// Navbar scroll effect (matches benchmark's scroll trigger threshold: 100px)
+(() => {
+  const navbarComponent = document.querySelector(".navbar_component");
+  if (!navbarComponent) return;
+  const SCROLL_THRESHOLD = 100;
+  const updateScrolledState = () => {
+    navbarComponent.classList.toggle("is-scrolled", window.scrollY > SCROLL_THRESHOLD);
+  };
+  updateScrolledState();
+  window.addEventListener("scroll", updateScrolledState, { passive: true });
+})();
 
 // Mobile nav
 document.querySelector(".navbar_menu-button")?.addEventListener("click", function() {
