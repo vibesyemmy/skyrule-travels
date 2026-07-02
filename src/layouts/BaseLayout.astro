@@ -19,6 +19,9 @@ import Footer from "../components/footer/Footer.astro";
 
   <link rel="stylesheet" href="/styles/drivelodge.css"/>
 
+  <!-- Font smoothing (from benchmark) — index.astro inlines its own copy of this rule -->
+  <style is:global>*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-o-font-smoothing:antialiased;-webkit-appearance:none}</style>
+
   <!-- Fluid root font-size scaling (from benchmark, missing from drivelodge.css) -->
   <style is:global>
   html { font-size: 1.125rem; }
