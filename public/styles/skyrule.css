@@ -77,7 +77,9 @@
 /* PORT CHECKLIST — revisit as these benchmark sections/pages get ported:
    - Surfaces taking the green/orange fill that carried WHITE text in the
      benchmark: .section_index-hero, .index_cta, .signup-form_form.is-success,
-     .success-message, .values_card (and .is-gold = orange). Flip their text
+     .success-message, .values_card (and .is-gold = orange),
+     .pagination1_page-button.is-active-inputactive,
+     .config_vehicle_card_button.is--active. Flip their text
      to var(--skyrule--ink) (or a dark cut) as each is brought over.
    - The checkbox checked-state pulls a CDN Tick.svg with a baked-in blue
      stroke — needs a replacement green asset when forms are ported. */

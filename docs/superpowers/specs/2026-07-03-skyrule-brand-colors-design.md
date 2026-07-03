@@ -8,10 +8,10 @@ Rebrand the site's color system from Drivelodge blue to the official Skyrule col
 
 | Token (new) | Value | Role | Contrast basis |
 |---|---|---|---|
-| `--skyrule--green` | `#A3D346` | Fills: brand buttons, brand surfaces | vs `--skyrule--ink` ≈ 12:1 ✓ |
+| `--skyrule--green` | `#A3D346` | Fills: brand buttons, brand surfaces | vs `--skyrule--ink` ≈ 9:1 ✓ |
 | `--skyrule--green-hover` | `#8CB93A` | Hover fills | darker cut of green |
 | `--skyrule--green-text` | `#55701F` | Green used AS TEXT on light backgrounds (link-style button, `.text-color-blue-2`) | vs white ≈ 5.6:1 ✓ AA (raw green is ~1.7:1 — never use as text on light) |
-| `--skyrule--ink` | `#1C2A05` | Text on green fills — replaces today's white button text | on green ≈ 12:1 ✓ |
+| `--skyrule--ink` | `#1C2A05` | Text on green fills — replaces today's white button text | on green ≈ 9:1 ✓ |
 | `--skyrule--orange` | `#E26E00` | Accents ONLY: focus rings, future eyebrow labels/highlights; takes over the `--gold` token | decorative/large-element use; not body text on white (~3.2:1) |
 
 White text on either brand color fails AA for normal text — that is why button text flips to ink and the orange stays out of text roles.
