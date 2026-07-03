@@ -27,11 +27,14 @@ White text on either brand color fails AA for normal text — that is why button
    - `--base-color-brand--blue-darkest: var(--skyrule--green-text)`
    - `--base-color-brand--gold: var(--skyrule--orange)` (single use: `.values_card.is-gold`)
 3. **Button text flip** — scoped, NOT blanket: `.button-content:not([class*="w-variant"]) { color: var(--skyrule--ink); }`. The variant rules in `drivelodge.css` use `:where()` (zero specificity), so a blanket `.button-content{color:...}` loading after them would also override the primary button's white-on-black and break it. The `:not()` scoping targets exactly the base/brand-style buttons (which carry no variant class). The link-style variant additionally gets `.button-content:where(.w-variant-16fb8767-26f4-a35f-edd9-ba91eadcd66c) { color: var(--skyrule--green-text); }` so green-as-text is the AA-passing cut — and its hover gets `.button-content:hover:where(.w-variant-16fb8767-…) { color: var(--skyrule--ink); }`, because the re-pointed `-darkest` token would otherwise make resting and hover the identical `#55701F` (no visible hover feedback).
-4. **Literal-blue rule overrides** (the hardcoded `#437ef7` rules in `drivelodge.css`, verified complete by grep):
+4. **Literal-blue rule overrides** (the hardcoded blue-literal rules (`#437ef7`, `#0d53e4`, `#1e54c3`) in `drivelodge.css`, verified complete by grep across all three hexes):
    - `.button-2 { background-color/border-color: var(--skyrule--green); color: var(--skyrule--ink); }`
    - `.button-2.is-blue { background-color/border-color: var(--skyrule--green); }`
    - `.text-color-blue-2 { color: var(--skyrule--green-text); }`
    - `.config_sidebar_button { background-color: var(--skyrule--green); color: var(--skyrule--ink); }`
+   - `.button-2:hover { background-color/border-color: var(--skyrule--green-hover) }`
+   - `.config_sidebar_button.is-next:hover { background-color: var(--skyrule--green-hover) }`
+   - `.badge-2.is-blue { color: var(--skyrule--green-text) }`
    - (`.pagination1_page-button`'s `#437ef700` is fully transparent — hue is invisible, no override needed.)
 
 **Small color-only edits to the two shells** (structure untouched):

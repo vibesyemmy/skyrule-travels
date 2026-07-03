@@ -39,8 +39,9 @@
   color: var(--skyrule--ink);
 }
 
-/* The complete inventory of rules in drivelodge.css that hardcode #437ef7
-   instead of using the token (verified by grep). Overridden here so the
+/* The complete inventory of rules in drivelodge.css that hardcode a blue
+   literal (#437ef7, #0d53e4, or #1e54c3) instead of using the token (verified
+   by grep across all three hexes). Overridden here so the
    benchmark file stays untouched. (.pagination1_page-button's #437ef700 is
    fully transparent — hue is invisible, no override needed.) */
 .button-2 {
@@ -58,6 +59,16 @@
 .config_sidebar_button {
   background-color: var(--skyrule--green);
   color: var(--skyrule--ink);
+}
+.button-2:hover {
+  background-color: var(--skyrule--green-hover);
+  border-color: var(--skyrule--green-hover);
+}
+.config_sidebar_button.is-next:hover {
+  background-color: var(--skyrule--green-hover);
+}
+.badge-2.is-blue {
+  color: var(--skyrule--green-text);
 }
 
 /* Text-role guards — drivelodge.css puts the raw brand token directly on
