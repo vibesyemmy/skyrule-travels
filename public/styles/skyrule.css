@@ -90,10 +90,11 @@
 }
 
 /* Skyrule logo sizing — the kit's 1.92:1 logo is much squarer than the old
-   3.3:1 Drivelodge SVG, and drivelodge.css sizes both logo containers by
-   WIDTH (.navbar_logo-link 6.5rem, .footer_logo-wrap 11.25rem), which would
-   stretch the navbar/footer vertically. Constrain by height instead; width
-   follows the aspect ratio. */
+   3.3:1 Drivelodge SVG. drivelodge.css sizes the footer logo by WIDTH
+   (.footer_logo-wrap 11.25rem) and the navbar anchor 2.25rem tall at desktop
+   (width-capped 7.05rem/6.5rem at tablet/mobile breakpoints) — either way the
+   squarer artwork would stretch the bars. Constrain the imgs by height
+   instead; width follows the aspect ratio. */
 .navbar_logo-link {
   height: 2.75rem; /* drivelodge's 2.25rem anchor height centers the anchor, not the taller img — match them so the logo sits on optical center */
 }
