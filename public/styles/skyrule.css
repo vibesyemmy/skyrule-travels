@@ -89,6 +89,21 @@
   color: var(--skyrule--green-text);
 }
 
+/* Hero services grid clearance — the benchmark's .parallax__content is a
+   bottom-anchored full-viewport panel (min-height:100svh + justify-end; its
+   padding rule is a no-op, --section-padding is defined nowhere) whose top
+   ~24vh is deliberately left empty because the hero's fade/rocks visuals
+   overlap it (visuals are 144vh vs the 120vh header). That held with one row
+   of cards; our four-card grid overflows the viewport, which pushed row 1 up
+   under the opaque fade. Reserve the overlap zone explicitly. Desktop-only:
+   below 992px the parallax layers and fade are hide-tablet, so there is no
+   overlap and no clearance is wanted. */
+@media (min-width: 992px) {
+  .parallax__content {
+    padding-top: 28svh;
+  }
+}
+
 /* Skyrule logo sizing — the kit's 1.92:1 logo is much squarer than the old
    3.3:1 Drivelodge SVG. drivelodge.css sizes the footer logo by WIDTH
    (.footer_logo-wrap 11.25rem) and the navbar anchor 2.25rem tall at desktop
