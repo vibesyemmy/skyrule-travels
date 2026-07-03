@@ -21,9 +21,10 @@ All four ship (~150KB total) so the brand kit lives in-repo; only the dark varia
 
 **Navbar (`src/components/nav/Navbar.astro`):** the inline Drivelodge `<svg class="logo" viewBox="0 0 136 41">…</svg>` inside `a.navbar_logo-link` becomes
 `<img src="/images/skyrule-logo-dark.png" alt="Skyrule Travels" class="logo"/>`.
-Sizing: `drivelodge.css` already drives the logo by height (`.logo { height: 100% }` filling the anchor), so an `<img class="logo">` keeps the bar height stable and simply renders narrower (squarer aspect). The implementation pins the anchor's effective height live; if the rendered logo needs a nudge (too small/large within the bar), the adjustment goes in Navbar.astro's existing `<style>` block — never in `drivelodge.css`.
+Sizing: pinned from `drivelodge.css` + live measurement — despite `.logo { height: 100% }`, both containers are actually WIDTH-constrained (`.navbar_logo-link { width: 6.5rem; height: auto }` → old logo renders 119×36; `.footer_logo-wrap { width: 11.25rem }` → 180×54). The squarer Skyrule logo at those widths would render ~62px/~94px tall and stretch both bars. So the swap adds two height-constrained rules to `public/styles/skyrule.css` (the brand overlay — the right home since this is brand-asset styling that must apply in both shells; never `drivelodge.css`):
+`.navbar_logo-link img.logo { height: 2.75rem; width: auto; }` and `.footer_logo-wrap img.logo { height: 3.5rem; width: auto; }` — keeping the navbar bar height and footer logo footprint essentially unchanged (verified live pre/post).
 
-**Footer (`src/components/footer/Footer.astro`):** the identical inline SVG inside `.footer_logo-wrap` gets the same `<img>` replacement (same file, same `class="logo"`, same height-driven sizing via the wrap).
+**Footer (`src/components/footer/Footer.astro`):** the identical inline SVG inside `.footer_logo-wrap` gets the same `<img>` replacement (same file, same `class="logo"`, sized by the footer rule above).
 
 **Favicon (`public/favicon.png`):** replaced by a 256×256 transparent-padded square render of the full-color bird mark (the top portion of the logo, above the wordmark — exact crop box measured programmatically from the image at plan time). Every favicon reference in both shells points at `/favicon.png` (`rel="icon"` in both; `index.astro` additionally has a `rel="apple-touch-icon"` link to the same file), so this is a file replacement with zero markup edits. The current file is 32×32; 256×256 also covers the apple-touch-icon use decently.
 
