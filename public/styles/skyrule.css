@@ -69,6 +69,10 @@
 }
 .badge-2.is-blue {
   color: var(--skyrule--green-text);
+  background-color: #f2f9e5; /* pale green chip — same ~14% tint-on-white as drivelodge's #e5edff; not part of the three-hex inventory claim */
+}
+.badge-2.is-blue.filter:hover {
+  background-color: #e3f1c6; /* green analogue of drivelodge's #c5d5f8 hover tint */
 }
 
 /* Text-role guards — drivelodge.css puts the raw brand token directly on
@@ -93,4 +97,7 @@
      .config_vehicle_card_button.is--active. Flip their text
      to var(--skyrule--ink) (or a dark cut) as each is brought over.
    - The checkbox checked-state pulls a CDN Tick.svg with a baked-in blue
-     stroke — needs a replacement green asset when forms are ported. */
+     stroke — needs a replacement green asset when forms are ported.
+   - Other benchmark-inherited pale-blue chips outside the inventory scope:
+     .badge.is-blue, .config_card_image_label (#2159cc text), and Webflow's
+     checkbox-checked #3898ec — re-tint as their pages get ported. */
