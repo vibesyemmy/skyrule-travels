@@ -10,7 +10,7 @@
   --skyrule--green: #a3d346;        /* fills: brand buttons, brand surfaces */
   --skyrule--green-hover: #8cb93a;  /* hover fills */
   --skyrule--green-text: #55701f;   /* green AS TEXT on light bg (AA ~5.6:1; raw green is ~1.7:1 on white) */
-  --skyrule--ink: #1c2a05;          /* text on green fills (~12:1) */
+  --skyrule--ink: #1c2a05;          /* text on green fills (~9:1) */
   --skyrule--orange: #e26e00;       /* accent only: focus rings, eyebrows, highlights */
 
   /* Re-point the wired Webflow brand tokens */
@@ -59,3 +59,25 @@
   background-color: var(--skyrule--green);
   color: var(--skyrule--ink);
 }
+
+/* Text-role guards — drivelodge.css puts the raw brand token directly on
+   these TEXT elements; raw green (#a3d346) fails AA on light backgrounds
+   (~1.7:1), so they get the AA text cut instead. None appear on current
+   pages — these prevent silent regressions as future pages are ported. */
+.faq_question,
+.text-color-blue,
+.fitter-post_contact-item,
+.config_sidebar-item_select.is--active,
+.config-select.is--active,
+.breadcrumb-link:hover,
+.text-size-regular a {
+  color: var(--skyrule--green-text);
+}
+
+/* PORT CHECKLIST — revisit as these benchmark sections/pages get ported:
+   - Surfaces taking the green/orange fill that carried WHITE text in the
+     benchmark: .section_index-hero, .index_cta, .signup-form_form.is-success,
+     .success-message, .values_card (and .is-gold = orange). Flip their text
+     to var(--skyrule--ink) (or a dark cut) as each is brought over.
+   - The checkbox checked-state pulls a CDN Tick.svg with a baked-in blue
+     stroke — needs a replacement green asset when forms are ported. */
