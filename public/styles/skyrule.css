@@ -101,3 +101,17 @@
    - Other benchmark-inherited pale-blue chips outside the inventory scope:
      .badge.is-blue, .config_card_image_label (#2159cc text), and Webflow's
      checkbox-checked #3898ec — re-tint as their pages get ported. */
+
+/* Skyrule logo sizing — the kit's 1.92:1 logo is much squarer than the old
+   3.3:1 Drivelodge SVG, and drivelodge.css sizes both logo containers by
+   WIDTH (.navbar_logo-link 6.5rem, .footer_logo-wrap 11.25rem), which would
+   stretch the navbar/footer vertically. Constrain by height instead; width
+   follows the aspect ratio. */
+.navbar_logo-link img.logo {
+  height: 2.75rem;
+  width: auto;
+}
+.footer_logo-wrap img.logo {
+  height: 3.5rem;
+  width: auto;
+}
