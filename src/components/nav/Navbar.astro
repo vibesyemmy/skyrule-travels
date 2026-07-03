@@ -1,7 +1,16 @@
 ---
 // Navbar — exact benchmark markup from drivelodge.co.uk
 // Depends on: /styles/drivelodge.css or style.css
+// startScrolled: pins the dark-blur .is-scrolled state from load. Use on pages
+// whose first section has a light background (white nav text would otherwise be
+// invisible until the scroll effect kicks in). Default keeps the benchmark
+// behavior: transparent at top, dark blur after 100px of scroll.
 import Button from '../button/Button.astro';
+
+interface Props {
+  startScrolled?: boolean;
+}
+const { startScrolled = false } = Astro.props;
 ---
 
 <style>
@@ -18,7 +27,7 @@ import Button from '../button/Button.astro';
 }
 </style>
 
-<div data-animation="default" class="navbar_component w-nav" data-wf--navbar--variant="base" data-easing2="ease" data-theme="dark" fs-scrolldisable-element="smart-nav" data-easing="ease" data-collapse="medium" data-w-id="8f7b0fc4-8b9e-6a95-c861-3831c1c09eae" role="banner" data-duration="400">
+<div data-animation="default" class={'navbar_component w-nav' + (startScrolled ? ' is-scrolled' : '')} data-start-scrolled={startScrolled ? '' : undefined} data-wf--navbar--variant="base" data-easing2="ease" data-theme="dark" fs-scrolldisable-element="smart-nav" data-easing="ease" data-collapse="medium" data-w-id="8f7b0fc4-8b9e-6a95-c861-3831c1c09eae" role="banner" data-duration="400">
   <div class="navbar_container">
     <div class="navbar_background">
     </div>
@@ -141,6 +150,8 @@ import Button from '../button/Button.astro';
 (() => {
   const navbarComponent = document.querySelector(".navbar_component");
   if (!navbarComponent) return;
+  // startScrolled pages: .is-scrolled is server-rendered and pinned — no toggling.
+  if (navbarComponent.hasAttribute("data-start-scrolled")) return;
   const SCROLL_THRESHOLD = 100;
   const updateScrolledState = () => {
     navbarComponent.classList.toggle("is-scrolled", window.scrollY > SCROLL_THRESHOLD);

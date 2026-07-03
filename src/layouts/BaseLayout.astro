@@ -1,7 +1,15 @@
 ---
 // Skyrule — Base Layout
+// navbarStartScrolled: pass true on pages whose first section has a light
+// background — the navbar renders pinned in its dark-blur state so the white
+// logo/links stay visible at the top (see Navbar.astro's startScrolled).
 import Navbar from "../components/nav/Navbar.astro";
 import Footer from "../components/footer/Footer.astro";
+
+interface Props {
+  navbarStartScrolled?: boolean;
+}
+const { navbarStartScrolled = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -67,7 +75,7 @@ import Footer from "../components/footer/Footer.astro";
 
 <main class="main-wrapper"><div class="scroll-wrapper">
 
-<Navbar />
+<Navbar startScrolled={navbarStartScrolled} />
 
 <slot />
 
