@@ -25,6 +25,13 @@ const { startScrolled = false } = Astro.props;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+
+/* Mobile menu drawer background */
+.navbar_menu[data-nav-menu-open] {
+  background-color: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
 </style>
 
 <div data-animation="default" class={'navbar_component w-nav' + (startScrolled ? ' is-scrolled' : '')} data-start-scrolled={startScrolled ? '' : undefined} data-wf--navbar--variant="base" data-easing2="ease" data-theme="dark" fs-scrolldisable-element="smart-nav" data-easing="ease" data-collapse="medium" data-w-id="8f7b0fc4-8b9e-6a95-c861-3831c1c09eae" role="banner" data-duration="400">
