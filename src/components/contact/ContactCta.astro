@@ -1,0 +1,27 @@
+---
+// ContactCta — the site's shared contact section (enquiry form + availability
+// info + avatar dot). Extracted verbatim from index.astro; styled entirely by
+// drivelodge.css. Used on the homepage and the /contact page.
+---
+
+<section data-theme="light" class="section_contact-cta"><div class="padding-global"><div class="container-large"><div class="padding-section-large"><div class="contact-cta_component"><div class="contact-cta_content"><div class="contact-cta_header"><h2 class="heading-style-h3">Get in touch</h2><p class="body-text">Whether it's a quick fare check or a full itinerary, tell us your plans and a Skyrule travel expert will get back to you within one business day.</p></div><div class="contact-cta_info-wrapper"><div class="contact-cta_avatar-wrapper"><img src="/favicon.png" loading="lazy" alt="Skyrule Travels" class="contact-cta_avatar"/><div class="contact-cta_avatar-dot"></div></div><div class="contact-cta_hours"><div>We reply within one business day</div><div>enquiries@skyruletravels.com</div><div>Lagos, Nigeria</div></div></div></div><div class="contact-cta_form-wrapper"><div class="contact-cta_form-block w-form"><form class="contact-cta_form"><div class="form_field-wrapper _2col"><div class="form_field-wrapper"><label for="first-name" class="form_field-label">First name*</label><input class="form_input w-input" maxlength="256" name="first-name" placeholder="John" type="text" id="first-name" required/></div><div class="form_field-wrapper"><label for="last-name" class="form_field-label">Last name*</label><input class="form_input w-input" maxlength="256" name="last-name" placeholder="Smith" type="text" id="last-name" required/></div></div><div class="form_field-wrapper _2col"><div class="form_field-wrapper"><label for="email" class="form_field-label">Email address</label><input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="email" required/></div><div class="form_field-wrapper"><label for="phone" class="form_field-label">Phone number*</label><input class="form_input w-input" maxlength="256" name="phone" placeholder="+234" type="tel" id="phone" required/></div></div><div class="form_field-wrapper"><label for="message" class="form_field-label">Message</label><textarea id="message" name="message" maxlength="5000" placeholder="Type something..." required class="form_input is-text-area w-input"></textarea></div><input type="submit" data-wait="Please wait..." class="button max-width-full w-button" value="Send enquiry"/></form></div></div></div></div></div></div></section>
+
+<script>
+// Availability dot — green during provisional Lagos business hours
+// (Mon–Fri 09:00–17:00 WAT), red outside. Hours are provisional until the
+// client confirms; the visible copy deliberately promises "one business day"
+// rather than opening hours.
+(() => {
+  const dot = document.querySelector(".contact-cta_avatar-dot");
+  if (!dot) return;
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Africa/Lagos", hour12: false,
+    weekday: "long", hour: "2-digit", minute: "2-digit",
+  }).formatToParts(new Date());
+  const get = (t) => parts.find((p) => p.type === t).value;
+  const day = get("weekday").toLowerCase();
+  const time = `${get("hour")}:${get("minute")}`;
+  const open = !["saturday", "sunday"].includes(day) && time >= "09:00" && time <= "17:00";
+  dot.style.backgroundColor = open ? "#00cc41" : "#fd1d0c";
+})();
+</script>

@@ -5,6 +5,7 @@ import Navbar from '../components/nav/Navbar.astro';
 import Hero from '../components/hero/Hero.astro';
 import Footer from '../components/footer/Footer.astro';
 import Button from '../components/button/Button.astro';
+import ContactCta from '../components/contact/ContactCta.astro';
 ---
 
 <!DOCTYPE html>
@@ -114,7 +115,7 @@ body *{color:inherit}a,.w-input,.w-select,.w-tab-link,.w-nav-link,.w-slider-arro
 
 <header data-theme="dark" class="section_build-cta"><div class="padding-global"><div class="container-large"><div class="padding-section-large"><div class="build-cta_component"><div class="build-cta_header-wrap"><div data-wf--header-block--size="medium---centre" class="header-wrapper w-variant-ad828f27-e9ee-986a-b474-73e7a657278c"><div class="header-text-wrap"><div class="header-top"><h2 class="heading-style w-variant-ad828f27-e9ee-986a-b474-73e7a657278c">Travel with confidence</h2></div><p class="body-text">As travellers ourselves, we know peace of mind matters most. Every Skyrule trip comes with a named expert, transparent pricing, and support that answers — before, during and after you fly.</p></div><div class="button-group"><Button href="/contact" label="Plan your trip" icon={false} /></div></div></div></div></div></div></div></header>
 
-<section data-theme="light" class="section_contact-cta"><div class="padding-global"><div class="container-large"><div class="padding-section-large"><div class="contact-cta_component"><div class="contact-cta_content"><div class="contact-cta_header"><h2 class="heading-style-h3">Get in touch</h2><p class="body-text">Whether it's a quick fare check or a full itinerary, tell us your plans and a Skyrule travel expert will get back to you within one business day.</p></div><div class="contact-cta_info-wrapper"><div class="contact-cta_avatar-wrapper"><img src="/favicon.png" loading="lazy" alt="Skyrule Travels" class="contact-cta_avatar"/><div class="contact-cta_avatar-dot"></div></div><div class="contact-cta_hours"><div>We reply within one business day</div><div>enquiries@skyruletravels.com</div><div>Lagos, Nigeria</div></div></div></div><div class="contact-cta_form-wrapper"><div class="contact-cta_form-block w-form"><form class="contact-cta_form"><div class="form_field-wrapper _2col"><div class="form_field-wrapper"><label for="first-name" class="form_field-label">First name*</label><input class="form_input w-input" maxlength="256" name="first-name" placeholder="John" type="text" id="first-name" required/></div><div class="form_field-wrapper"><label for="last-name" class="form_field-label">Last name*</label><input class="form_input w-input" maxlength="256" name="last-name" placeholder="Smith" type="text" id="last-name" required/></div></div><div class="form_field-wrapper _2col"><div class="form_field-wrapper"><label for="email" class="form_field-label">Email address</label><input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="email" required/></div><div class="form_field-wrapper"><label for="phone" class="form_field-label">Phone number*</label><input class="form_input w-input" maxlength="256" name="phone" placeholder="+234" type="tel" id="phone" required/></div></div><div class="form_field-wrapper"><label for="message" class="form_field-label">Message</label><textarea id="message" name="message" maxlength="5000" placeholder="Type something..." required class="form_input is-text-area w-input"></textarea></div><input type="submit" data-wait="Please wait..." class="button max-width-full w-button" value="Send enquiry"/></form></div></div></div></div></div></div></section>
+<ContactCta />
 
 </div></main>
 <Footer /></div>
@@ -214,39 +215,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Contact avatar open/closed status dot (ported from benchmark)
-document.addEventListener("DOMContentLoaded", () => {
-  const openingHours = {
-    monday: { open: "08:30", close: "17:00" },
-    tuesday: { open: "08:30", close: "17:00" },
-    wednesday: { open: "08:30", close: "17:00" },
-    thursday: { open: "08:30", close: "17:00" },
-    friday: { open: "08:30", close: "16:00" },
-    saturday: null,
-    sunday: null,
-  };
-  const openColor = "#00cc41";
-  const closedColor = "#fd1d0c";
-
-  const now = new Date();
-  const options = { timeZone: "Europe/London", hour12: false, weekday: "long", hour: "2-digit", minute: "2-digit" };
-  const formattedTime = new Intl.DateTimeFormat("en-GB", options).formatToParts(now);
-  const currentDay = formattedTime.find(part => part.type === "weekday").value.toLowerCase();
-  const currentHour = formattedTime.find(part => part.type === "hour").value;
-  const currentMinute = formattedTime.find(part => part.type === "minute").value;
-  const currentTime = `${currentHour}:${currentMinute}`;
-
-  function isOpen(day, time) {
-    const hours = openingHours[day];
-    if (!hours) return false;
-    return time >= hours.open && time <= hours.close;
-  }
-
-  const dot = document.querySelector(".contact-cta_avatar-dot");
-  if (dot) {
-    dot.style.backgroundColor = isOpen(currentDay, currentTime) ? openColor : closedColor;
-  }
-});
 
 // Video lightbox (hero + home-video "Watch Video" triggers)
 function getYouTubeId(url) {

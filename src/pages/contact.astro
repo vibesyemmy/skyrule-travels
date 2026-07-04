@@ -1,9 +1,15 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactCta from "../components/contact/ContactCta.astro";
 ---
-<BaseLayout>
+<BaseLayout navbarStartScrolled>
+  <!-- White content sheet (same rationale as about.astro): the fixed footer
+       sits behind the content, and this page's own sections don't paint the
+       full sheet. Ships on /contact only. -->
+  <style is:global>.scroll-wrapper { background-color: var(--background-color--background-primary); }</style>
   <section class="padding-global"><div class="container-large"><div class="padding-section-large">
     <h1 class="heading-style-h1">Contact</h1>
-    <p class="body-text">Coming soon.</p>
+    <p class="body-text">Tell us about your next trip — a Skyrule travel expert replies within one business day.</p>
   </div></div></section>
+  <ContactCta />
 </BaseLayout>
