@@ -42,6 +42,8 @@ const { navbarStartScrolled = false } = Astro.props;
 
   <!-- Webflow utility classes (from benchmark) — Navbar depends on .hide/.hide-tablet for responsive show/hide -->
   <style is:global>
+  /* Prevent horizontal overflow on mobile */
+  html, body { overflow-x: hidden; width: 100%; }
   body *{color:inherit}a,.w-input,.w-select,.w-tab-link,.w-nav-link,.w-slider-arrow-left,.w-slider-arrow-right,.w-dropdown-btn,.w-dropdown-toggle,.w-dropdown-link{color:inherit;text-decoration:inherit;font-size:inherit}
   *[tabindex]:focus-visible,input[type="file"]:focus-visible{outline:.125rem solid #E26E00;outline-offset:.125rem}
   .w-richtext>:not(div):first-child,.w-richtext>div:first-child>:first-child{margin-top:0!important}
