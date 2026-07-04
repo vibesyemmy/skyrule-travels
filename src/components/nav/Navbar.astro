@@ -37,6 +37,17 @@ const { startScrolled = false } = Astro.props;
 .navbar_menu .navbar_link {
   border-bottom-color: rgba(255, 255, 255, 0.12);
 }
+
+/* Dropdown cards — remove any bright borders, keep them clean on dark bg */
+.navbar_menu .home-products_card {
+  border: none;
+}
+
+/* Services dropdown — flow in document, don't overlap bottom buttons on mobile */
+.navbar_menu .navbar9_dropdown-list.w--open {
+  position: relative;
+  z-index: 0;
+}
 </style>
 
 <div data-animation="default" class={'navbar_component w-nav' + (startScrolled ? ' is-scrolled' : '')} data-start-scrolled={startScrolled ? '' : undefined} data-wf--navbar--variant="base" data-easing2="ease" data-theme="dark" fs-scrolldisable-element="smart-nav" data-easing="ease" data-collapse="medium" data-w-id="8f7b0fc4-8b9e-6a95-c861-3831c1c09eae" role="banner" data-duration="400">
