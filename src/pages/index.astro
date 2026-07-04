@@ -33,7 +33,9 @@ import ContactCta from '../components/contact/ContactCta.astro';
 
 <!-- Font smoothing (from benchmark) -->
 <!-- Inlined since this page doesn't use BaseLayout.astro — must stay byte-for-byte benchmark-verbatim. -->
-<style is:global>*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-o-font-smoothing:antialiased;-webkit-appearance:none}</style>
+<style is:global>
+  html, body { overflow-x: hidden; width: 100%; }
+  *{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-o-font-smoothing:antialiased;-webkit-appearance:none}</style>
 <style is:global>.video-cta_lightbox .lenis.lenis-smooth iframe{pointer-events:auto}</style>
 
 <!-- Webflow class init (from benchmark) -->
