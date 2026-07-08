@@ -62,21 +62,16 @@
   .hero-search_fields.is-hotels {
     grid-template-columns: 2fr 1fr 1fr auto;
   }
-  .hero-search_field { display: flex; flex-direction: column; gap: 0.3rem; }
-  .hero-search_label {
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.7);
-  }
-  /* Reuses the design system's .form_input skin; compact height for the bar */
-  .hero-search :global(.form_input) { min-height: 3.25rem; }
-  .hero-search_field input:disabled {
+  /* Fields use the contact page's exact anatomy: .form_field-label +
+     .form_input.w-input from the design system. Labels inherit the dark
+     theme's white text; inputs keep the system's 3.75rem height. */
+  .hero-search :global(.form_field-wrapper) { display: flex; flex-direction: column; }
+  .hero-search :global(.form_input:disabled) {
     opacity: 0.45;
     cursor: not-allowed;
   }
   .hero-search_submit {
-    min-height: 3.25rem;
+    min-height: 3.75rem;
     font-size: var(--text-s);
     color: var(--skyrule--ink);
     background-color: var(--skyrule--green);
@@ -157,21 +152,21 @@
 
   <form data-panel="flights" class="is-active" novalidate>
     <div class="hero-search_fields">
-      <div class="hero-search_field">
-        <label class="hero-search_label" for="hs-from">From</label>
-        <input id="hs-from" name="from" type="text" class="form_input" placeholder="Lagos (LOS)" required />
+      <div class="form_field-wrapper">
+        <label for="hs-from" class="form_field-label is-alternate">From*</label>
+        <input class="form_input w-input" maxlength="256" name="from" placeholder="Lagos (LOS)" type="text" id="hs-from" required/>
       </div>
-      <div class="hero-search_field">
-        <label class="hero-search_label" for="hs-to">To</label>
-        <input id="hs-to" name="to" type="text" class="form_input" placeholder="London (LHR)" required />
+      <div class="form_field-wrapper">
+        <label for="hs-to" class="form_field-label is-alternate">To*</label>
+        <input class="form_input w-input" maxlength="256" name="to" placeholder="London (LHR)" type="text" id="hs-to" required/>
       </div>
-      <div class="hero-search_field">
-        <label class="hero-search_label" for="hs-depart">Departure</label>
-        <input id="hs-depart" name="departure" type="date" class="form_input" required />
+      <div class="form_field-wrapper">
+        <label for="hs-depart" class="form_field-label is-alternate">Departure*</label>
+        <input class="form_input w-input" name="departure" type="date" id="hs-depart" required/>
       </div>
-      <div class="hero-search_field">
-        <label class="hero-search_label" for="hs-return">Return</label>
-        <input id="hs-return" name="return" type="date" class="form_input" />
+      <div class="form_field-wrapper">
+        <label for="hs-return" class="form_field-label is-alternate">Return</label>
+        <input class="form_input w-input" name="return" type="date" id="hs-return"/>
       </div>
       <button type="submit" class="hero-search_submit">Request quote</button>
     </div>
@@ -179,17 +174,17 @@
 
   <form data-panel="hotels" novalidate>
     <div class="hero-search_fields is-hotels">
-      <div class="hero-search_field">
-        <label class="hero-search_label" for="hs-city">Destination</label>
-        <input id="hs-city" name="destination" type="text" class="form_input" placeholder="City or hotel" required />
+      <div class="form_field-wrapper">
+        <label for="hs-city" class="form_field-label is-alternate">Destination*</label>
+        <input class="form_input w-input" maxlength="256" name="destination" placeholder="City or hotel" type="text" id="hs-city" required/>
       </div>
-      <div class="hero-search_field">
-        <label class="hero-search_label" for="hs-checkin">Check-in</label>
-        <input id="hs-checkin" name="check-in" type="date" class="form_input" required />
+      <div class="form_field-wrapper">
+        <label for="hs-checkin" class="form_field-label is-alternate">Check-in*</label>
+        <input class="form_input w-input" name="check-in" type="date" id="hs-checkin" required/>
       </div>
-      <div class="hero-search_field">
-        <label class="hero-search_label" for="hs-checkout">Check-out</label>
-        <input id="hs-checkout" name="check-out" type="date" class="form_input" />
+      <div class="form_field-wrapper">
+        <label for="hs-checkout" class="form_field-label is-alternate">Check-out</label>
+        <input class="form_input w-input" name="check-out" type="date" id="hs-checkout"/>
       </div>
       <button type="submit" class="hero-search_submit">Request quote</button>
     </div>
