@@ -1,9 +1,10 @@
 ---
 // Hero flight/hotel enquiry widget — travelbeta.com-style tabbed search bar,
 // built as LEAD CAPTURE: Skyrule has no live booking engine, so the traveller
-// describes the trip and the request becomes an enquiry for the team.
-// SUBMIT IS A PLACEHOLDER for now (shows the success state only) — the email
-// delivery mechanism gets wired when hosting is decided.
+// describes the trip and the request is emailed to the team via the
+// FormSubmit relay (no backend required; see the submit handler). The inbox
+// owner must click FormSubmit's one-time activation link, which arrives with
+// the first real submission.
 // Sits in the hero title layer, which is locked to 100svh on desktop, so the
 // bar stays compact: one small-controls row + one main field row.
 ---
@@ -99,6 +100,16 @@
     white-space: nowrap;
   }
   .hero-search_submit:hover { background-color: var(--skyrule--green-hover); }
+  .hero-search_submit:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .hero-search_error {
+    margin-top: 1rem;
+    color: #ffb4a8;
+    font-size: var(--text-s);
+  }
+  .hero-search_error a { color: var(--skyrule--green); }
   .hero-search_success { display: none; color: #fff; }
   .hero-search_success .heading-style-h6 { margin-bottom: 0.25rem; }
   .hero-search_reset {
@@ -309,6 +320,8 @@
     </div>
   </form>
 
+  <div class="hero-search_error" hidden role="alert">Something went wrong sending your request. Please try again, or reach us directly at <a href="mailto:enquiries@skyruletravels.com">enquiries@skyruletravels.com</a> or <a href="tel:+2348061659861">0806 165 9861</a>.</div>
+
   <div class="hero-search_success" role="status">
     <div class="heading-style-h6">Request received</div>
     <div class="text-size-regular">A Skyrule travel expert will get back to you within one business day.</div>
@@ -366,12 +379,13 @@
     fpReturn.altInput.disabled = oneWay;
   });
 
-  // Submit — PLACEHOLDER: shows the success state only.
-  // TODO(wiring): when hosting is decided, send the payload below as an
-  // email to Skyrule (relay service or serverless function), then keep the
-  // same success state.
+  // Submit — the enquiry is emailed to Skyrule via the FormSubmit relay
+  // (free, no backend; the inbox owner clicks a one-time activation link
+  // that arrives with the first submission). To move to a serverless
+  // sender later, only ENDPOINT and the fetch below need to change.
+  const ENDPOINT = "https://formsubmit.co/ajax/enquiries@skyruletravels.com";
   root.querySelectorAll("form[data-panel]").forEach((form) => {
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       let valid = true;
       form.querySelectorAll("[required]").forEach((f) => {
@@ -381,8 +395,32 @@
       const payload = Object.fromEntries(new FormData(form));
       payload.kind = form.dataset.panel;
       root.querySelectorAll("[data-minis]:not([hidden]) select").forEach((s) => (payload[s.name] = s.value));
-      console.debug("hero-search enquiry (not yet delivered):", payload);
-      root.classList.add("is-done");
+      payload._subject = payload.kind === "flights"
+        ? `Flight quote request: ${payload.from} -> ${payload.to}`
+        : `Hotel quote request: ${payload.destination}`;
+      payload._template = "table";
+      payload._captcha = "false";
+
+      const btn = form.querySelector(".hero-search_submit");
+      const label = btn.textContent;
+      const errorBox = root.querySelector(".hero-search_error");
+      btn.disabled = true;
+      btn.textContent = "Sending…";
+      errorBox.hidden = true;
+      try {
+        const res = await fetch(ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        root.classList.add("is-done");
+      } catch {
+        errorBox.hidden = false;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = label;
+      }
     });
   });
 
