@@ -102,7 +102,8 @@ claim from the About page ("IATA and ITP travel accreditations").
 Delta, Lufthansa, Arik, British Airways, EgyptAir, Virgin Atlantic, ASKY,
 Camair-Co, United Airlines, Air France, Alitalia, Gambia Bird, South African
 Airways, Hahn Air, Turkish Airlines, Air Senegal, Ethiopian, Etihad, Kenya
-Airways, KLM, Qatar Airways, RwandAir, China Southern, Iberia.
+Airways, KLM, Qatar Airways, RwandAir, China Southern, Iberia, Royal Air Maroc
+(identified during logo extraction — 25 total).
 
 ## Bankers
 
