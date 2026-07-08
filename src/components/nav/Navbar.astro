@@ -43,6 +43,32 @@ const { startScrolled = false } = Astro.props;
   border: none;
 }
 
+/* Subtle open animation: the mega-panel fades in with a short downward
+   slide, and the toggle's chevron flips while open. The keyframes fire when
+   w--open flips the list from display:none, so no display-transition tricks
+   are needed; closing stays instant, as mega menus usually do. */
+.dropdown-chevron {
+  transition: transform 0.2s ease;
+}
+.navbar9_dropdown-toggle.w--open .dropdown-chevron {
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .navbar9_dropdown-list.w--open .navbar_dropdown-wrapper {
+    animation: nav-dropdown-in 0.22s ease-out;
+  }
+  @keyframes nav-dropdown-in {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
 /* Services dropdown — flow in document, don't overlap bottom buttons on
    mobile. MOBILE-ONLY: left unscoped, this also de-absolutized the desktop
    mega-panel, making the navbar grow to the panel's height and scattering
