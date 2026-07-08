@@ -43,10 +43,15 @@ const { startScrolled = false } = Astro.props;
   border: none;
 }
 
-/* Services dropdown — flow in document, don't overlap bottom buttons on mobile */
-.navbar_menu .navbar9_dropdown-list.w--open {
-  position: relative;
-  z-index: 0;
+/* Services dropdown — flow in document, don't overlap bottom buttons on
+   mobile. MOBILE-ONLY: left unscoped, this also de-absolutized the desktop
+   mega-panel, making the navbar grow to the panel's height and scattering
+   the logo/menu items whenever the dropdown opened. */
+@media (max-width: 991px) {
+  .navbar_menu .navbar9_dropdown-list.w--open {
+    position: relative;
+    z-index: 0;
+  }
 }
 </style>
 
