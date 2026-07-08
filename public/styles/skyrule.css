@@ -117,6 +117,9 @@
   height: 2.75rem;
   width: auto;
 }
+.footer_logo-wrap {
+  width: auto; /* benchmark caps the wrap at 11.25rem; combined with Webflow's global img{max-width:100%} that squashes the 1.92:1 mark once it's taller than ~5.9rem */
+}
 .footer_logo-wrap img.logo {
   height: 9rem;
   width: auto;
