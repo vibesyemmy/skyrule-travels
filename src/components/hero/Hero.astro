@@ -1,10 +1,10 @@
 ---
 // Skyrule Hero — literal benchmark structure/classes, Skyrule brand copy.
 // The benchmark's layered parallax cutouts (mountains/van/rocks) are replaced
-// by ONE background photo on .parallax__visuals at every width — the same
-// mechanism the benchmark itself used below 992px (where it still pointed at
-// Drivelodge CDN photos). The GSAP script in index.astro still animates the
-// remaining [data-parallax-layer] (the title block).
+// by ONE static background photo on .parallax__visuals at every width — the
+// same mechanism the benchmark itself used below 992px (where it still
+// pointed at Drivelodge CDN photos). The GSAP parallax script was removed
+// from index.astro with the layers; the hero no longer animates on scroll.
 import Button from '../button/Button.astro';
 ---
 <style>
@@ -29,8 +29,8 @@ import Button from '../button/Button.astro';
     <section class="parallax__header">
       <div class="parallax__visuals">
         <div class="parallax__black-line-overflow"></div>
-        <div data-parallax-layers class="parallax__layers">
-          <div data-parallax-layer="3" class="parallax__layer-title">
+        <div class="parallax__layers">
+          <div class="parallax__layer-title">
             <div class="padding-global">
               <div class="container-large">
                 <div class="hero-home_content">
@@ -50,21 +50,6 @@ import Button from '../button/Button.astro';
                             <Button href="/services" label="Our services" variant="primary" size="large" />
                           </div>
                         </div>
-                      </div>
-                      <div class="hero-home_video-wrapper">
-                        <a href="#" class="video-cta_lightbox w-inline-block w-lightbox" data-video-url="https://www.youtube.com/watch?v=XXfufgp_Y9Q">
-                          <div class="w-layout-grid video-cta_content">
-                            <div class="video-cta_text-wrap">
-                              <div class="text-size-regular">The Skyrule Story</div>
-                              <div class="text-size-small opacity-70">Watch Video</div>
-                            </div>
-                            <div class="video-cta_icon-wrap"><div class="video-cta_icon-bg"><div class="video-cta_icon w-embed"><svg width="100%" height="100%" viewBox="0 0 9 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.1577 7.15773L0.0409546 13.4849V0.830566L8.1577 7.15773Z" fill="currentcolor"/></svg></div></div></div>
-                          </div>
-                          <div class="video-cta_image-wrap">
-                            <img sizes="100vw" srcset="images/677bc0530d77e0e618f27231_Process Hero-p-500.webp 500w, images/677bc0530d77e0e618f27231_Process Hero-p-800.webp 800w, images/677bc0530d77e0e618f27231_Process Hero-p-1080.webp 1080w, images/677bc0530d77e0e618f27231_Process Hero-p-1600.webp 1600w, images/677bc0530d77e0e618f27231_Process Hero-p-2000.webp 2000w, images/677bc0530d77e0e618f27231_Process Hero-p-2600.webp 2600w, images/677bc0530d77e0e618f27231_Process Hero.webp 2752w" alt="" loading="lazy" src="images/677bc0530d77e0e618f27231_Process Hero.webp" class="video-cta_image"/>
-                            <div class="video-cta_image-overlay"></div>
-                          </div>
-                        </a>
                       </div>
                     </div>
                   </div>

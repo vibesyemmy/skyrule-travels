@@ -131,50 +131,6 @@ body *{color:inherit}a,.w-input,.w-select,.w-tab-link,.w-nav-link,.w-slider-arro
 <script is:inline src="https://cdn.jsdelivr.net/gh/lumosframework/scripts@v1.0.5/themes.js"></script>
 
 <script is:inline>
-// GSAP Parallax (ported from benchmark's code-embed-js)
-document.addEventListener("DOMContentLoaded", () => {
-  gsap.registerPlugin(ScrollTrigger);
-
-  const initParallax = () => {
-    document.querySelectorAll("[data-parallax-layers]").forEach((triggerElement) => {
-      let tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: triggerElement,
-          start: "0% 0%",
-          end: "100% 0%",
-          scrub: 0
-        }
-      });
-
-      const layers = [
-        { layer: "1", yPercent: 40 },
-        { layer: "2", yPercent: 30 },
-        { layer: "3", yPercent: 80 },
-        { layer: "4", yPercent: 20 }
-      ];
-
-      layers.forEach((layerObj, idx) => {
-        tl.to(
-          triggerElement.querySelectorAll(`[data-parallax-layer="${layerObj.layer}"]`),
-          { yPercent: layerObj.yPercent, ease: "none" },
-          idx === 0 ? undefined : "<"
-        );
-      });
-    });
-  };
-
-  const checkBreakpoint = () => {
-    if (window.innerWidth > 991) {
-      initParallax();
-    } else {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    }
-  };
-
-  checkBreakpoint();
-  window.addEventListener("resize", checkBreakpoint);
-});
-
 // Swiper (ported from benchmark's product-benefits_js embed)
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".product-benefits_wrap").forEach((wrap) => {
