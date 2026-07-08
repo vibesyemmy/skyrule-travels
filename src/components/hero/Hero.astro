@@ -19,18 +19,24 @@ import HeroSearch from './HeroSearch.astro';
     background-position: 50% 50%, 50% 42%;
     background-size: cover, cover;
   }
-  /* Below 992px the benchmark locks the hero to a fixed height with the
-     title layer absolutely positioned — the search widget overflowed into
-     the cards section. Put the whole layer chain in flow (the header's only
-     in-flow child was the absolute visuals, so height:auto alone collapsed
-     it) and let the header grow with content; the absolute visuals keeps
-     painting the photo behind whatever height results. */
-  @media (max-width: 991px) {
-    .parallax__header { height: auto; min-height: 50rem; max-height: none; }
-    .parallax__visuals { position: relative; height: auto; }
-    .parallax__layers { position: relative; height: auto; overflow: visible; }
-    .parallax__layer-title { position: relative; height: auto; }
+  /* Hero sizing, all widths: exactly one screen tall, growing with content
+     when it doesn't fit (the benchmark instead locked the header to 120svh
+     with the visuals overhanging the next section by 24svh — which needed
+     an artificial clearance padding on the cards section, now removed from
+     skyrule.css). The whole layer chain sits in normal flow; the visuals
+     div paints the photo and centers the content when the screen is taller
+     than it. */
+  .parallax__header { height: auto; min-height: 0; max-height: none; }
+  .parallax__visuals {
+    position: relative;
+    height: auto;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
+  .parallax__layers { position: relative; height: auto; overflow: visible; }
+  .parallax__layer-title { position: relative; height: auto; }
   /* The benchmark also puts Drivelodge CDN photos on .parallax itself at
      tablet/mobile — invisible behind our visuals, but still downloaded. */
   .parallax { background-image: none; }
