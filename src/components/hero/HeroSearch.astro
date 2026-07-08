@@ -1,0 +1,256 @@
+---
+// Hero flight/hotel enquiry widget — travelbeta.com-style tabbed search bar,
+// built as LEAD CAPTURE: Skyrule has no live booking engine, so the traveller
+// describes the trip and the request becomes an enquiry for the team.
+// SUBMIT IS A PLACEHOLDER for now (shows the success state only) — the email
+// delivery mechanism gets wired when hosting is decided.
+// Sits in the hero title layer, which is locked to 100svh on desktop, so the
+// bar stays compact: one small-controls row + one main field row.
+---
+<style>
+  .hero-search {
+    width: 100%;
+    background-color: rgba(10, 14, 8, 0.62);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 1rem;
+    padding: 1.25rem;
+  }
+  .hero-search_top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .hero-search_tabs { display: flex; gap: 0.5rem; }
+  .hero-search_tab {
+    font-size: var(--text-s);
+    color: rgba(255, 255, 255, 0.85);
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 0.5rem;
+    padding: 0.55rem 1.1rem;
+    cursor: pointer;
+  }
+  .hero-search_tab.is-active {
+    background-color: var(--skyrule--green);
+    border-color: var(--skyrule--green);
+    color: var(--skyrule--ink);
+  }
+  .hero-search_minis { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .hero-search_minis[hidden] { display: none; } /* display:flex would otherwise defeat the hidden attribute */
+  .hero-search_mini {
+    font-size: var(--text-s);
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+  .hero-search_mini option { color: #000; }
+  .hero-search_fields {
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr 1fr 1fr auto;
+    gap: 0.75rem;
+    align-items: end;
+  }
+  .hero-search_fields.is-hotels {
+    grid-template-columns: 2fr 1fr 1fr auto;
+  }
+  .hero-search_field { display: flex; flex-direction: column; gap: 0.3rem; }
+  .hero-search_label {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  /* Reuses the design system's .form_input skin; compact height for the bar */
+  .hero-search :global(.form_input) { min-height: 3.25rem; }
+  .hero-search_field input:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .hero-search_submit {
+    min-height: 3.25rem;
+    font-size: var(--text-s);
+    color: var(--skyrule--ink);
+    background-color: var(--skyrule--green);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0 1.4rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .hero-search_submit:hover { background-color: var(--skyrule--green-hover); }
+  .hero-search_success { display: none; color: #fff; }
+  .hero-search_success .heading-style-h6 { margin-bottom: 0.25rem; }
+  .hero-search_reset {
+    color: var(--skyrule--green);
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: var(--text-s);
+  }
+  .hero-search.is-done .hero-search_top,
+  .hero-search.is-done form { display: none; }
+  .hero-search.is-done .hero-search_success { display: block; }
+  [data-panel] { display: none; }
+  [data-panel].is-active { display: block; }
+  @media (max-width: 991px) {
+    .hero-search_fields,
+    .hero-search_fields.is-hotels { grid-template-columns: 1fr 1fr; }
+    .hero-search_submit { grid-column: 1 / -1; }
+  }
+  @media (max-width: 479px) {
+    .hero-search_fields,
+    .hero-search_fields.is-hotels { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="hero-search">
+  <div class="hero-search_top">
+    <div class="hero-search_tabs" role="tablist" aria-label="What do you need?">
+      <button type="button" role="tab" aria-selected="true" class="hero-search_tab is-active" data-tab="flights">Flights</button>
+      <button type="button" role="tab" aria-selected="false" class="hero-search_tab" data-tab="hotels">Hotels</button>
+    </div>
+    <div class="hero-search_minis" data-minis="flights">
+      <select class="hero-search_mini" name="trip-type" aria-label="Trip type">
+        <option>Round trip</option>
+        <option>One way</option>
+      </select>
+      <select class="hero-search_mini" name="travellers" aria-label="Travellers">
+        <option>1 traveller</option>
+        <option>2 travellers</option>
+        <option>3 travellers</option>
+        <option>4 travellers</option>
+        <option>5+ travellers</option>
+      </select>
+      <select class="hero-search_mini" name="cabin" aria-label="Cabin class">
+        <option>Economy</option>
+        <option>Premium Economy</option>
+        <option>Business</option>
+        <option>First</option>
+      </select>
+    </div>
+    <div class="hero-search_minis" data-minis="hotels" hidden>
+      <select class="hero-search_mini" name="rooms" aria-label="Rooms">
+        <option>1 room</option>
+        <option>2 rooms</option>
+        <option>3+ rooms</option>
+      </select>
+      <select class="hero-search_mini" name="guests" aria-label="Guests">
+        <option>1 guest</option>
+        <option>2 guests</option>
+        <option>3 guests</option>
+        <option>4+ guests</option>
+      </select>
+    </div>
+  </div>
+
+  <form data-panel="flights" class="is-active" novalidate>
+    <div class="hero-search_fields">
+      <div class="hero-search_field">
+        <label class="hero-search_label" for="hs-from">From</label>
+        <input id="hs-from" name="from" type="text" class="form_input" placeholder="Lagos (LOS)" required />
+      </div>
+      <div class="hero-search_field">
+        <label class="hero-search_label" for="hs-to">To</label>
+        <input id="hs-to" name="to" type="text" class="form_input" placeholder="London (LHR)" required />
+      </div>
+      <div class="hero-search_field">
+        <label class="hero-search_label" for="hs-depart">Departure</label>
+        <input id="hs-depart" name="departure" type="date" class="form_input" required />
+      </div>
+      <div class="hero-search_field">
+        <label class="hero-search_label" for="hs-return">Return</label>
+        <input id="hs-return" name="return" type="date" class="form_input" />
+      </div>
+      <button type="submit" class="hero-search_submit">Request quote</button>
+    </div>
+  </form>
+
+  <form data-panel="hotels" novalidate>
+    <div class="hero-search_fields is-hotels">
+      <div class="hero-search_field">
+        <label class="hero-search_label" for="hs-city">Destination</label>
+        <input id="hs-city" name="destination" type="text" class="form_input" placeholder="City or hotel" required />
+      </div>
+      <div class="hero-search_field">
+        <label class="hero-search_label" for="hs-checkin">Check-in</label>
+        <input id="hs-checkin" name="check-in" type="date" class="form_input" required />
+      </div>
+      <div class="hero-search_field">
+        <label class="hero-search_label" for="hs-checkout">Check-out</label>
+        <input id="hs-checkout" name="check-out" type="date" class="form_input" />
+      </div>
+      <button type="submit" class="hero-search_submit">Request quote</button>
+    </div>
+  </form>
+
+  <div class="hero-search_success" role="status">
+    <div class="heading-style-h6">Request received</div>
+    <div class="text-size-regular">A Skyrule travel expert will get back to you within one business day.</div>
+    <button type="button" class="hero-search_reset">Plan another trip</button>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector(".hero-search");
+
+  // Tab switching (values persist across switches)
+  const tabs = root.querySelectorAll(".hero-search_tab");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => {
+        const active = t === tab;
+        t.classList.toggle("is-active", active);
+        t.setAttribute("aria-selected", String(active));
+      });
+      root.querySelectorAll("[data-panel]").forEach((p) =>
+        p.classList.toggle("is-active", p.dataset.panel === tab.dataset.tab));
+      root.querySelectorAll("[data-minis]").forEach((m) =>
+        (m.hidden = m.dataset.minis !== tab.dataset.tab));
+    });
+  });
+
+  // One-way trips have no return date
+  const tripType = root.querySelector('[name="trip-type"]');
+  const returnInput = root.querySelector('[name="return"]');
+  tripType.addEventListener("change", () => {
+    const oneWay = tripType.value === "One way";
+    returnInput.disabled = oneWay;
+    if (oneWay) returnInput.value = "";
+  });
+
+  // No past dates
+  const today = new Date().toISOString().slice(0, 10);
+  root.querySelectorAll('input[type="date"]').forEach((i) => (i.min = today));
+
+  // Submit — PLACEHOLDER: shows the success state only.
+  // TODO(wiring): when hosting is decided, send the payload below as an
+  // email to Skyrule (relay service or serverless function), then keep the
+  // same success state.
+  root.querySelectorAll("form[data-panel]").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      let valid = true;
+      form.querySelectorAll("[required]").forEach((f) => {
+        if (!f.value.trim()) { f.reportValidity(); valid = false; }
+      });
+      if (!valid) return;
+      const payload = Object.fromEntries(new FormData(form));
+      payload.kind = form.dataset.panel;
+      root.querySelectorAll("[data-minis]:not([hidden]) select").forEach((s) => (payload[s.name] = s.value));
+      console.debug("hero-search enquiry (not yet delivered):", payload);
+      root.classList.add("is-done");
+    });
+  });
+
+  root.querySelector(".hero-search_reset").addEventListener("click", () => root.classList.remove("is-done"));
+</script>

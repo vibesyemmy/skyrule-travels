@@ -6,6 +6,7 @@
 // pointed at Drivelodge CDN photos). The GSAP parallax script was removed
 // from index.astro with the layers; the hero no longer animates on scroll.
 import Button from '../button/Button.astro';
+import HeroSearch from './HeroSearch.astro';
 ---
 <style>
   /* Single hero photo at all sizes, with a legibility scrim painted over it
@@ -19,6 +20,21 @@ import Button from '../button/Button.astro';
     background-position: 50% 50%, 50% 42%;
     background-size: cover, cover;
   }
+  /* Below 992px the benchmark locks the hero to a fixed height with the
+     title layer absolutely positioned — the search widget overflowed into
+     the cards section. Put the whole layer chain in flow (the header's only
+     in-flow child was the absolute visuals, so height:auto alone collapsed
+     it) and let the header grow with content; the absolute visuals keeps
+     painting the photo behind whatever height results. */
+  @media (max-width: 991px) {
+    .parallax__header { height: auto; min-height: 50rem; max-height: none; }
+    .parallax__visuals { position: relative; height: auto; }
+    .parallax__layers { position: relative; height: auto; overflow: visible; }
+    .parallax__layer-title { position: relative; height: auto; }
+  }
+  /* The benchmark also puts Drivelodge CDN photos on .parallax itself at
+     tablet/mobile — invisible behind our visuals, but still downloaded. */
+  .parallax { background-image: none; }
   /* Dark fade at the bottom of the hero, from benchmark's style.css (dropped during the initial markup port) */
   .parallax__fade {
     background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.738) 19%, rgba(0, 0, 0, 0.541) 34%, rgba(0, 0, 0, 0.382) 47%, rgba(0, 0, 0, 0.278) 56.5%, rgba(0, 0, 0, 0.194) 65%, rgba(0, 0, 0, 0.126) 73%, rgba(0, 0, 0, 0.075) 80.2%, rgba(0, 0, 0, 0.042) 86.1%, rgba(0, 0, 0, 0.021) 91%, rgba(0, 0, 0, 0.008) 95.2%, rgba(0, 0, 0, 0.002) 98.2%, transparent 100%);
@@ -51,6 +67,7 @@ import Button from '../button/Button.astro';
                           </div>
                         </div>
                       </div>
+                      <HeroSearch />
                     </div>
                   </div>
                 </div>
