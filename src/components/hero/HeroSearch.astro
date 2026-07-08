@@ -56,12 +56,20 @@
   .hero-search_mini option { color: #000; }
   .hero-search_fields {
     display: grid;
-    grid-template-columns: 1.2fr 1.2fr 1fr 1fr auto;
+    grid-template-columns: 1.2fr 1.2fr 1fr 1fr;
     gap: 0.75rem;
     align-items: end;
   }
   .hero-search_fields.is-hotels {
-    grid-template-columns: 2fr 1fr 1fr auto;
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+  /* Contact row: the enquiry needs a reply path (name + email + submit) */
+  .hero-search_contact {
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr auto;
+    gap: 0.75rem;
+    align-items: end;
+    margin-top: 0.75rem;
   }
   /* Fields use the contact page's exact anatomy: .form_field-label +
      .form_input.w-input from the design system. Labels inherit the dark
@@ -129,12 +137,14 @@
   [data-panel].is-active { display: block; }
   @media (max-width: 991px) {
     .hero-search_fields,
-    .hero-search_fields.is-hotels { grid-template-columns: 1fr 1fr; }
+    .hero-search_fields.is-hotels,
+    .hero-search_contact { grid-template-columns: 1fr 1fr; }
     .hero-search_submit { grid-column: 1 / -1; }
   }
   @media (max-width: 479px) {
     .hero-search_fields,
-    .hero-search_fields.is-hotels { grid-template-columns: 1fr; }
+    .hero-search_fields.is-hotels,
+    .hero-search_contact { grid-template-columns: 1fr; }
   }
 </style>
 <style is:global>
@@ -296,6 +306,16 @@
         <input class="form_input w-input" name="return" type="date" id="hs-return"/>
         <svg class="hero-search_cal" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       </div>
+    </div>
+    <div class="hero-search_contact">
+      <div class="form_field-wrapper">
+        <label for="hs-name" class="form_field-label is-alternate">Your name*</label>
+        <input class="form_input w-input" maxlength="256" name="name" placeholder="Ada Obi" type="text" id="hs-name" required/>
+      </div>
+      <div class="form_field-wrapper">
+        <label for="hs-email" class="form_field-label is-alternate">Email address*</label>
+        <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-email" required/>
+      </div>
       <button type="submit" class="hero-search_submit">Request quote</button>
     </div>
   </form>
@@ -315,6 +335,16 @@
         <label for="hs-checkout" class="form_field-label is-alternate">Check-out</label>
         <input class="form_input w-input" name="check-out" type="date" id="hs-checkout"/>
         <svg class="hero-search_cal" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="hero-search_contact">
+      <div class="form_field-wrapper">
+        <label for="hs-hname" class="form_field-label is-alternate">Your name*</label>
+        <input class="form_input w-input" maxlength="256" name="name" placeholder="Ada Obi" type="text" id="hs-hname" required/>
+      </div>
+      <div class="form_field-wrapper">
+        <label for="hs-hemail" class="form_field-label is-alternate">Email address*</label>
+        <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-hemail" required/>
       </div>
       <button type="submit" class="hero-search_submit">Request quote</button>
     </div>
@@ -398,6 +428,7 @@
       payload._subject = payload.kind === "flights"
         ? `Flight quote request: ${payload.from} -> ${payload.to}`
         : `Hotel quote request: ${payload.destination}`;
+      payload._replyto = payload.email; // Reply in the inbox goes to the customer
       payload._template = "table";
       payload._captcha = "false";
 

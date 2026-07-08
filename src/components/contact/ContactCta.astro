@@ -42,6 +42,7 @@ form?.addEventListener("submit", async (e) => {
   if (!form.reportValidity()) return;
   const payload = Object.fromEntries(new FormData(form));
   payload._subject = `New enquiry from ${payload["first-name"]} ${payload["last-name"]} — Skyrule website`;
+  payload._replyto = payload.email; // Reply in the inbox goes to the customer
   payload._template = "table";
   payload._captcha = "false";
 
