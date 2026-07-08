@@ -66,6 +66,23 @@
      .form_input.w-input from the design system. Labels inherit the dark
      theme's white text; inputs keep the system's 3.75rem height. */
   .hero-search :global(.form_field-wrapper) { display: flex; flex-direction: column; }
+  /* Date fields: flatpickr's altInput carries the same .form_input skin;
+     a custom calendar glyph sits inside the field (the native indicator
+     is gone with the native picker). */
+  .is-date :global(.form_input) { padding-right: 2.75rem; }
+  /* flatpickr's display input is readonly (click-to-open), which Webflow
+     skins grey — keep it matching the white text inputs */
+  .is-date :global(.form_input[readonly]) {
+    background-color: var(--base-color-neutral--white);
+    cursor: pointer;
+  }
+  .hero-search_cal {
+    position: absolute;
+    right: 1rem;
+    bottom: 1.3rem; /* centers the 18px glyph in the 3.75rem input */
+    color: #66707a;
+    pointer-events: none;
+  }
   .hero-search :global(.form_input:disabled) {
     opacity: 0.45;
     cursor: not-allowed;
@@ -109,6 +126,33 @@
     .hero-search_fields.is-hotels { grid-template-columns: 1fr; }
   }
 </style>
+<style is:global>
+  /* Skyrule theme for the flatpickr popup (rendered at body level, so
+     these can't be component-scoped). Light card to match the white
+     inputs; brand green for selection. The `body` prefix outranks
+     flatpickr's own stylesheet, which loads later in the document. */
+  body .flatpickr-calendar {
+    border-radius: 0.75rem;
+    border: 1px solid #e6e9ee;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.16);
+  }
+  body .flatpickr-day { border-radius: 0.5rem; }
+  body .flatpickr-day:hover,
+  body .flatpickr-day.prevMonthDay:hover,
+  body .flatpickr-day.nextMonthDay:hover { background: #f2f9e5; border-color: #f2f9e5; }
+  body .flatpickr-day.today { border-color: var(--skyrule--green); }
+  body .flatpickr-day.selected,
+  body .flatpickr-day.selected:focus,
+  body .flatpickr-day.selected:hover {
+    background: var(--skyrule--green);
+    border-color: var(--skyrule--green);
+    color: var(--skyrule--ink);
+  }
+  body .flatpickr-months .flatpickr-prev-month:hover svg,
+  body .flatpickr-months .flatpickr-next-month:hover svg { fill: var(--skyrule--green-text); }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css"/>
+<script is:inline src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
 
 <div class="hero-search">
   <div class="hero-search_top">
@@ -160,13 +204,15 @@
         <label for="hs-to" class="form_field-label is-alternate">To*</label>
         <input class="form_input w-input" maxlength="256" name="to" placeholder="London (LHR)" type="text" id="hs-to" required/>
       </div>
-      <div class="form_field-wrapper">
+      <div class="form_field-wrapper is-date">
         <label for="hs-depart" class="form_field-label is-alternate">Departure*</label>
         <input class="form_input w-input" name="departure" type="date" id="hs-depart" required/>
+        <svg class="hero-search_cal" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       </div>
-      <div class="form_field-wrapper">
+      <div class="form_field-wrapper is-date">
         <label for="hs-return" class="form_field-label is-alternate">Return</label>
         <input class="form_input w-input" name="return" type="date" id="hs-return"/>
+        <svg class="hero-search_cal" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       </div>
       <button type="submit" class="hero-search_submit">Request quote</button>
     </div>
@@ -178,13 +224,15 @@
         <label for="hs-city" class="form_field-label is-alternate">Destination*</label>
         <input class="form_input w-input" maxlength="256" name="destination" placeholder="City or hotel" type="text" id="hs-city" required/>
       </div>
-      <div class="form_field-wrapper">
+      <div class="form_field-wrapper is-date">
         <label for="hs-checkin" class="form_field-label is-alternate">Check-in*</label>
         <input class="form_input w-input" name="check-in" type="date" id="hs-checkin" required/>
+        <svg class="hero-search_cal" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       </div>
-      <div class="form_field-wrapper">
+      <div class="form_field-wrapper is-date">
         <label for="hs-checkout" class="form_field-label is-alternate">Check-out</label>
         <input class="form_input w-input" name="check-out" type="date" id="hs-checkout"/>
+        <svg class="hero-search_cal" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       </div>
       <button type="submit" class="hero-search_submit">Request quote</button>
     </div>
@@ -216,18 +264,35 @@
     });
   });
 
-  // One-way trips have no return date
-  const tripType = root.querySelector('[name="trip-type"]');
-  const returnInput = root.querySelector('[name="return"]');
-  tripType.addEventListener("change", () => {
-    const oneWay = tripType.value === "One way";
-    returnInput.disabled = oneWay;
-    if (oneWay) returnInput.value = "";
+  // Modern calendar popups (flatpickr): friendly display format on a visible
+  // altInput that carries the design system's input skin, ISO value on the
+  // original (named) input, no past dates, and the return/check-out pickers
+  // can't precede the outbound date.
+  const dateOpts = {
+    altInput: true,
+    altInputClass: "form_input w-input",
+    altFormat: "j M Y",
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    disableMobile: true,
+  };
+  const fpReturn = flatpickr("#hs-return", dateOpts);
+  const fpDepart = flatpickr("#hs-depart", { ...dateOpts, onChange: (d) => d[0] && fpReturn.set("minDate", d[0]) });
+  const fpCheckout = flatpickr("#hs-checkout", dateOpts);
+  flatpickr("#hs-checkin", { ...dateOpts, onChange: (d) => d[0] && fpCheckout.set("minDate", d[0]) });
+  document.querySelectorAll(".hero-search input.flatpickr-input").forEach((i) => {
+    const fp = i._flatpickr;
+    fp.altInput.placeholder = "Select date";
+    fp.altInput.required = fp.input.required; // so empty-field validity bubbles show on the visible input
   });
 
-  // No past dates
-  const today = new Date().toISOString().slice(0, 10);
-  root.querySelectorAll('input[type="date"]').forEach((i) => (i.min = today));
+  // One-way trips have no return date
+  const tripType = root.querySelector('[name="trip-type"]');
+  tripType.addEventListener("change", () => {
+    const oneWay = tripType.value === "One way";
+    if (oneWay) fpReturn.clear();
+    fpReturn.altInput.disabled = oneWay;
+  });
 
   // Submit — PLACEHOLDER: shows the success state only.
   // TODO(wiring): when hosting is decided, send the payload below as an
