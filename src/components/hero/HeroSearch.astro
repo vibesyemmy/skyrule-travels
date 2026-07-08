@@ -45,15 +45,29 @@
   }
   .hero-search_minis { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .hero-search_minis[hidden] { display: none; } /* display:flex would otherwise defeat the hidden attribute */
+  /* Mini selects as shadcn select triggers: white, zinc border, chevron.
+     (The open option list is OS-rendered and can't be styled.) */
   .hero-search_mini {
+    appearance: none;
+    -webkit-appearance: none;
+    height: 2.5rem;
+    padding: 0 2.25rem 0 0.75rem;
     font-size: var(--text-s);
-    color: #fff;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #09090b;
+    background-color: #fff;
+    border: 1px solid #e4e4e7;
     border-radius: 0.5rem;
-    padding: 0.5rem 0.75rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.65rem center;
+    background-size: 1rem;
+    cursor: pointer;
   }
-  .hero-search_mini option { color: #000; }
+  .hero-search_mini:hover { border-color: #d4d4d8; }
+  .hero-search_mini:focus-visible {
+    outline: 2px solid var(--skyrule--green);
+    outline-offset: 2px;
+  }
   .hero-search_fields {
     display: grid;
     grid-template-columns: 1.2fr 1.2fr 1fr 1fr;
@@ -63,14 +77,20 @@
   .hero-search_fields.is-hotels {
     grid-template-columns: 2fr 1fr 1fr;
   }
-  /* Contact row: the enquiry needs a reply path (name + email + submit) */
+  /* Contact row: the enquiry needs a reply path (name + email + submit).
+     Shares the trip-fields grid template so columns align across rows;
+     the submit button spans the last two columns. */
   .hero-search_contact {
     display: grid;
-    grid-template-columns: 1.2fr 1.2fr auto;
+    grid-template-columns: 1.2fr 1.2fr 1fr 1fr;
     gap: 0.75rem;
     align-items: end;
     margin-top: 0.75rem;
   }
+  .hero-search_contact .hero-search_submit { grid-column: span 2; }
+  /* hotels fields are a 3-track grid (2fr 1fr 1fr) — align its contact row */
+  [data-panel="hotels"] .hero-search_contact { grid-template-columns: 2fr 1fr 1fr; }
+  [data-panel="hotels"] .hero-search_contact .hero-search_submit { grid-column: auto; }
   /* Fields use the contact page's exact anatomy: .form_field-label +
      .form_input.w-input from the design system. Labels inherit the dark
      theme's white text; inputs keep the system's 3.75rem height. */
