@@ -127,29 +127,100 @@
   }
 </style>
 <style is:global>
-  /* Skyrule theme for the flatpickr popup (rendered at body level, so
-     these can't be component-scoped). Light card to match the white
-     inputs; brand green for selection. The `body` prefix outranks
-     flatpickr's own stylesheet, which loads later in the document. */
+  /* shadcn-style skin for the flatpickr popup (rendered at body level, so
+     these can't be component-scoped; the `body` prefix outranks flatpickr's
+     own stylesheet, which loads later in the document). Zinc neutrals from
+     shadcn's default theme; the selected day uses the site primary (Skyrule
+     green) the way a shadcn theme would. */
   body .flatpickr-calendar {
-    border-radius: 0.75rem;
-    border: 1px solid #e6e9ee;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.16);
+    width: auto;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e4e4e7;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
-  body .flatpickr-day { border-radius: 0.5rem; }
+  /* shadcn popovers have no caret arrow */
+  body .flatpickr-calendar::before,
+  body .flatpickr-calendar::after { display: none; }
+
+  /* Header: static "July 2026" + square ghost chevron buttons */
+  body .flatpickr-months { align-items: center; margin-bottom: 0.5rem; }
+  body .flatpickr-months .flatpickr-month { color: #09090b; height: 2rem; }
+  body .flatpickr-current-month {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #09090b;
+    padding-top: 0.35rem;
+  }
+  body .flatpickr-current-month .cur-month { font-weight: 500; margin-right: 0.4ch; }
+  body .flatpickr-current-month .cur-month:hover { background: none; }
+  body .flatpickr-current-month input.cur-year { font-weight: 500; }
+  body .flatpickr-current-month .numInputWrapper:hover { background: none; }
+  body .flatpickr-current-month .numInputWrapper span { display: none; } /* year spinners */
+  body .flatpickr-months .flatpickr-prev-month,
+  body .flatpickr-months .flatpickr-next-month {
+    top: 0.75rem;
+    height: 1.75rem;
+    width: 1.75rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e4e4e7;
+    border-radius: 0.375rem;
+    color: #09090b;
+  }
+  body .flatpickr-months .flatpickr-prev-month { left: 0.75rem; }
+  body .flatpickr-months .flatpickr-next-month { right: 0.75rem; }
+  /* flatpickr hides an out-of-range month arrow; shadcn shows it disabled */
+  body .flatpickr-months .flatpickr-prev-month.flatpickr-disabled,
+  body .flatpickr-months .flatpickr-next-month.flatpickr-disabled {
+    display: flex;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  body .flatpickr-months .flatpickr-prev-month:hover,
+  body .flatpickr-months .flatpickr-next-month:hover { background: #f4f4f5; color: #09090b; }
+  body .flatpickr-months .flatpickr-prev-month svg,
+  body .flatpickr-months .flatpickr-next-month svg { width: 0.875rem; height: 0.875rem; fill: currentColor; }
+  body .flatpickr-months .flatpickr-prev-month:hover svg,
+  body .flatpickr-months .flatpickr-next-month:hover svg { fill: currentColor; }
+
+  /* Muted weekday labels */
+  body span.flatpickr-weekday { color: #71717a; font-size: 0.8rem; font-weight: 400; }
+
+  /* 7-column grid at exactly 7 × 36px (shadcn's w-9 cells). Without this,
+     the 36px max-width beats flatpickr's 14.28% flex-basis and rows wrap at
+     8 cells, misaligning days from the weekday header. */
+  body .flatpickr-days { width: 252px; }
+  body .dayContainer { width: 252px; min-width: 252px; max-width: 252px; }
+
+  /* Day cells: square, rounded-md */
+  body .flatpickr-day {
+    height: 2.25rem;
+    max-width: 2.25rem;
+    line-height: 2.25rem;
+    border-radius: 0.375rem;
+    border: none;
+    font-size: 0.875rem;
+    color: #09090b;
+  }
   body .flatpickr-day:hover,
+  body .flatpickr-day:focus,
   body .flatpickr-day.prevMonthDay:hover,
-  body .flatpickr-day.nextMonthDay:hover { background: #f2f9e5; border-color: #f2f9e5; }
-  body .flatpickr-day.today { border-color: var(--skyrule--green); }
+  body .flatpickr-day.nextMonthDay:hover { background: #f4f4f5; }
+  body .flatpickr-day.today { background: #f4f4f5; color: #09090b; }
   body .flatpickr-day.selected,
   body .flatpickr-day.selected:focus,
   body .flatpickr-day.selected:hover {
     background: var(--skyrule--green);
-    border-color: var(--skyrule--green);
     color: var(--skyrule--ink);
+    font-weight: 500;
   }
-  body .flatpickr-months .flatpickr-prev-month:hover svg,
-  body .flatpickr-months .flatpickr-next-month:hover svg { fill: var(--skyrule--green-text); }
+  body .flatpickr-day.prevMonthDay,
+  body .flatpickr-day.nextMonthDay { color: #a1a1aa; }
+  body .flatpickr-day.flatpickr-disabled,
+  body .flatpickr-day.flatpickr-disabled:hover { color: #d4d4d8; background: none; }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css"/>
 <script is:inline src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
@@ -275,6 +346,7 @@
     dateFormat: "Y-m-d",
     minDate: "today",
     disableMobile: true,
+    monthSelectorType: "static", // plain "July 2026" header, shadcn-style
   };
   const fpReturn = flatpickr("#hs-return", dateOpts);
   const fpDepart = flatpickr("#hs-depart", { ...dateOpts, onChange: (d) => d[0] && fpReturn.set("minDate", d[0]) });
