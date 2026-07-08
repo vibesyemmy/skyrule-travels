@@ -1,11 +1,24 @@
 ---
-// Skyrule Hero — literal benchmark structure/classes, Skyrule brand copy,
-// real asset filenames from public/images. Parallax layers are animated by
-// the global GSAP script at the bottom of index.astro (targets
-// [data-parallax-layer]), so no per-page script is duplicated here.
+// Skyrule Hero — literal benchmark structure/classes, Skyrule brand copy.
+// The benchmark's layered parallax cutouts (mountains/van/rocks) are replaced
+// by ONE background photo on .parallax__visuals at every width — the same
+// mechanism the benchmark itself used below 992px (where it still pointed at
+// Drivelodge CDN photos). The GSAP script in index.astro still animates the
+// remaining [data-parallax-layer] (the title block).
 import Button from '../button/Button.astro';
 ---
 <style>
+  /* Single hero photo at all sizes, with a legibility scrim painted over it
+     (multi-background keeps the scrim behind all children, so the title and
+     buttons are never covered). Overrides the benchmark's tablet/mobile
+     Drivelodge CDN background-images via Astro's scoped-style specificity. */
+  .parallax__visuals {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.18) 45%, rgba(0, 0, 0, 0.42) 100%),
+      url('/images/hero-BG.jpg');
+    background-position: 50% 50%, 50% 42%;
+    background-size: cover, cover;
+  }
   /* Dark fade at the bottom of the hero, from benchmark's style.css (dropped during the initial markup port) */
   .parallax__fade {
     background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.738) 19%, rgba(0, 0, 0, 0.541) 34%, rgba(0, 0, 0, 0.382) 47%, rgba(0, 0, 0, 0.278) 56.5%, rgba(0, 0, 0, 0.194) 65%, rgba(0, 0, 0, 0.126) 73%, rgba(0, 0, 0, 0.075) 80.2%, rgba(0, 0, 0, 0.042) 86.1%, rgba(0, 0, 0, 0.021) 91%, rgba(0, 0, 0, 0.008) 95.2%, rgba(0, 0, 0, 0.002) 98.2%, transparent 100%);
@@ -17,8 +30,6 @@ import Button from '../button/Button.astro';
       <div class="parallax__visuals">
         <div class="parallax__black-line-overflow"></div>
         <div data-parallax-layers class="parallax__layers">
-          <img width="800" data-parallax-layer="1" alt="" src="images/67864fe46913e952168c7743_Mountains Back v2.webp" loading="eager" class="parallax__layer-img hide-tablet"/>
-          <img width="800" data-parallax-layer="2" alt="" src="images/67864feadafc51a78c7d9ba8_Van v2.webp" loading="eager" class="parallax__layer-img hide-tablet"/>
           <div data-parallax-layer="3" class="parallax__layer-title">
             <div class="padding-global">
               <div class="container-large">
@@ -61,9 +72,8 @@ import Button from '../button/Button.astro';
               </div>
             </div>
           </div>
-          <img width="800" data-parallax-layer="4" alt="" src="images/67864fe9da10c464db0c1771_Rocks:Ground v2.webp" loading="eager" class="parallax__layer-img hide-tablet"/>
         </div>
-        <div class="parallax__fade hide-tablet"></div>
+        <div class="parallax__fade"></div>
       </div>
     </section>
     <section class="parallax__content">
