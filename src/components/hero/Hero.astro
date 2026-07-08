@@ -5,6 +5,7 @@
 // same mechanism the benchmark itself used below 992px (where it still
 // pointed at Drivelodge CDN photos). The GSAP parallax script was removed
 // from index.astro with the layers; the hero no longer animates on scroll.
+import Button from '../button/Button.astro';
 import HeroSearch from './HeroSearch.astro';
 ---
 <style>
@@ -55,6 +56,21 @@ import HeroSearch from './HeroSearch.astro';
   .max-width-hero .header-wrapper,
   .max-width-hero .header-text-wrap,
   .max-width-hero .header-top { align-items: center; }
+  /* Services section: intro header above the 4-card grid, centered
+     see-more button below (the full ten live on /services). */
+  .hero-services_header {
+    max-width: 64ch;
+    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .hero-services_header .body-text { opacity: 0.8; }
+  .hero-services_footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 3.5rem;
+  }
   /* Dark fade at the bottom of the hero, from benchmark's style.css (dropped during the initial markup port) */
   .parallax__fade {
     background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.738) 19%, rgba(0, 0, 0, 0.541) 34%, rgba(0, 0, 0, 0.382) 47%, rgba(0, 0, 0, 0.278) 56.5%, rgba(0, 0, 0, 0.194) 65%, rgba(0, 0, 0, 0.126) 73%, rgba(0, 0, 0, 0.075) 80.2%, rgba(0, 0, 0, 0.042) 86.1%, rgba(0, 0, 0, 0.021) 91%, rgba(0, 0, 0, 0.008) 95.2%, rgba(0, 0, 0, 0.002) 98.2%, transparent 100%);
@@ -98,6 +114,10 @@ import HeroSearch from './HeroSearch.astro';
       <div class="padding-global">
         <div class="container-large">
           <div class="padding-section-large">
+            <div class="hero-services_header">
+              <h2 class="heading-style-h3">Our services</h2>
+              <p class="body-text">Skyrule Travels is a Lagos-based travel management company — established in 2016, fully registered and IATA-accredited. From flights, hotels and visas to charters, protocol and airport pick-ups, we handle every part of the journey for individuals, families and businesses.</p>
+            </div>
             <div class="home-products_component">
               <a data-theme="dark" href="/services" class="home-products_card w-inline-block">
                 <div class="home-products_content-top">
@@ -159,37 +179,8 @@ import HeroSearch from './HeroSearch.astro';
                   <div class="home-products_image-overlay"></div>
                 </div>
               </a>
-              <a data-theme="dark" href="/services" class="home-products_card w-inline-block">
-                <div class="home-products_content-top">
-                  <div class="home-products_text-wrap">
-                    <div class="home-products_header-wrap">
-                      <h2 class="home-product_header">Corporate Travel</h2>
-                    </div>
-                    <div class="home-products_body-wrap"><div class="text-size-regular">Travel management for businesses — policy-friendly bookings, consolidated billing and support your team can call.</div></div>
-                  </div>
-                  <div class="home-products_icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 17" fill="none"><g clip-path="url(#clip0_6401_1558)"><path d="M10.9541 3.45557L6.00455 3.49545L5.99226 5.02155L10.5927 4.98503L3.05492 12.5549L4.12551 13.6255L11.6959 6.02298L11.6583 10.6887L13.1844 10.6764L13.2249 5.72629C13.2282 5.11964 12.9913 4.5402 12.5657 4.11468C12.1402 3.68916 11.5608 3.45218 10.9541 3.45557Z" fill="currentColor"></path></g><defs><clippath id="clip0_6401_1558"><rect width="16" height="16" fill="currentColor" transform="translate(0 0.5)"></rect></clippath></defs></svg></div>
-                </div>
-                <div class="home-products_image-wrap">
-                  <img src="/images/skyrule-corporate-travel.jpg" loading="lazy" alt="A business traveller walking through an airport with a suitcase" class="home-products_image"/>
-                  <div class="home-products_image-overlay"></div>
-                </div>
-              </a>
-              <a data-theme="dark" href="/services" class="home-products_card w-inline-block">
-                <div class="home-products_content-top">
-                  <div class="home-products_text-wrap">
-                    <div class="home-products_header-wrap">
-                      <h2 class="home-product_header">Leisure Packages</h2>
-                    </div>
-                    <div class="home-products_body-wrap"><div class="text-size-regular">Honeymoons, holidays and group getaways — amazing, affordable packages planned from start to finish.</div></div>
-                  </div>
-                  <div class="home-products_icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 17" fill="none"><g clip-path="url(#clip0_6401_1558)"><path d="M10.9541 3.45557L6.00455 3.49545L5.99226 5.02155L10.5927 4.98503L3.05492 12.5549L4.12551 13.6255L11.6959 6.02298L11.6583 10.6887L13.1844 10.6764L13.2249 5.72629C13.2282 5.11964 12.9913 4.5402 12.5657 4.11468C12.1402 3.68916 11.5608 3.45218 10.9541 3.45557Z" fill="currentColor"></path></g><defs><clippath id="clip0_6401_1558"><rect width="16" height="16" fill="currentColor" transform="translate(0 0.5)"></rect></clippath></defs></svg></div>
-                </div>
-                <div class="home-products_image-wrap">
-                  <img src="/images/skyrule-svc-leisure.jpg" loading="lazy" alt="A family on a tropical beach at sunset" class="home-products_image"/>
-                  <div class="home-products_image-overlay"></div>
-                </div>
-              </a>
             </div>
+            <div class="hero-services_footer"><Button href="/services" label="See more services" /></div>
           </div>
         </div>
       </div>
