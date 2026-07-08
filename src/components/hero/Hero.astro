@@ -37,7 +37,14 @@ import HeroSearch from './HeroSearch.astro';
   /* Centered hero: copy and search bar sit on the page axis (the benchmark
      lays the hero out left-aligned; buttons were removed with the change). */
   .hero-home_content { justify-content: center; } /* row flex: its single child shrinks to fit and sat at flex-start */
-  .hero-home_component { align-items: center; }
+  .hero-home_component {
+    align-items: center;
+    /* The benchmark space-betweens the column (title top, card bottom),
+       stretching a huge gap between copy and form — cluster them instead. */
+    justify-content: center;
+    grid-row-gap: 2.5rem;
+    row-gap: 2.5rem;
+  }
   .max-width-hero { text-align: center; }
   .max-width-hero .header-wrapper,
   .max-width-hero .header-text-wrap,
