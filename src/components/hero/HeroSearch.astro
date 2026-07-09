@@ -5,37 +5,25 @@
 // FormSubmit relay (no backend required; see the submit handler). The inbox
 // owner must click FormSubmit's one-time activation link, which arrives with
 // the first real submission.
-// Sits in the hero title layer, which is locked to 100svh on desktop, so the
-// bar stays compact: one small-controls row + one main field row.
+// Sits in the hero title layer, which is locked to 100svh on desktop.
+// Tabs are OUTSIDE the form card; mini-selects are INSIDE each panel;
+// submit button is full-width on its own row.
 ---
 <style>
-  .hero-search {
-    width: 100%;
-    max-width: 64rem; /* centered under the (also centered) hero copy instead of spanning the full container */
-    margin-inline: auto;
-    background-color: rgba(10, 14, 8, 0.62);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 1rem;
-    padding: 1.25rem;
-  }
-  .hero-search_top {
+  /* ── Tabs: standalone, centered above the card ── */
+  .hero-search_tabs {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
     margin-bottom: 1rem;
   }
-  .hero-search_tabs { display: flex; gap: 0.5rem; }
   .hero-search_tab {
     font-size: var(--text-s);
     color: rgba(255, 255, 255, 0.85);
     background: none;
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 0.5rem;
-    padding: 0.55rem 1.1rem;
+    padding: 0.55rem 1.4rem;
     cursor: pointer;
   }
   .hero-search_tab.is-active {
@@ -43,10 +31,27 @@
     border-color: var(--skyrule--green);
     color: var(--skyrule--ink);
   }
-  .hero-search_minis { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .hero-search_minis[hidden] { display: none; } /* display:flex would otherwise defeat the hidden attribute */
-  /* Mini selects as shadcn select triggers: white, zinc border, chevron.
-     (The open option list is OS-rendered and can't be styled.) */
+
+  /* ── Card: the form container ── */
+  .hero-search {
+    width: 100%;
+    max-width: 64rem;
+    margin-inline: auto;
+    background-color: rgba(10, 14, 8, 0.62);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 1rem;
+    padding: 1.5rem;
+  }
+
+  /* ── Mini-selects: small inline row inside the card, above the main fields ── */
+  .hero-search_minis {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
   .hero-search_mini {
     appearance: none;
     -webkit-appearance: none;
@@ -68,6 +73,8 @@
     outline: 2px solid var(--skyrule--green);
     outline-offset: 2px;
   }
+
+  /* ── Main fields grid: 4 columns on desktop ── */
   .hero-search_fields {
     display: grid;
     grid-template-columns: 1.2fr 1.2fr 1fr 1fr;
@@ -77,46 +84,22 @@
   .hero-search_fields.is-hotels {
     grid-template-columns: 2fr 1fr 1fr;
   }
-  /* Contact row: the enquiry needs a reply path (name + email + submit).
-     Shares the trip-fields grid template so columns align across rows;
-     the submit button spans the last two columns. */
+
+  /* ── Contact row: name + email, no submit button here ── */
   .hero-search_contact {
     display: grid;
-    grid-template-columns: 1.2fr 1.2fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
     align-items: end;
     margin-top: 0.75rem;
   }
-  .hero-search_contact .hero-search_submit { grid-column: span 2; }
-  /* hotels fields are a 3-track grid (2fr 1fr 1fr) — align its contact row */
-  [data-panel="hotels"] .hero-search_contact { grid-template-columns: 2fr 1fr 1fr; }
-  [data-panel="hotels"] .hero-search_contact .hero-search_submit { grid-column: auto; }
-  /* Fields use the contact page's exact anatomy: .form_field-label +
-     .form_input.w-input from the design system. Labels inherit the dark
-     theme's white text; inputs keep the system's 3.75rem height. */
-  .hero-search :global(.form_field-wrapper) { display: flex; flex-direction: column; }
-  /* Date fields: flatpickr's altInput carries the same .form_input skin;
-     a custom calendar glyph sits inside the field (the native indicator
-     is gone with the native picker). */
-  .is-date :global(.form_input) { padding-right: 2.75rem; }
-  /* flatpickr's display input is readonly (click-to-open), which Webflow
-     skins grey — keep it matching the white text inputs */
-  .is-date :global(.form_input[readonly]) {
-    background-color: var(--base-color-neutral--white);
-    cursor: pointer;
-  }
-  .hero-search_cal {
-    position: absolute;
-    right: 1rem;
-    bottom: 1.3rem; /* centers the 18px glyph in the 3.75rem input */
-    color: #66707a;
-    pointer-events: none;
-  }
-  .hero-search :global(.form_input:disabled) {
-    opacity: 0.45;
-    cursor: not-allowed;
+
+  /* ── Submit: full-width on its own row ── */
+  .hero-search_submit-row {
+    margin-top: 0.75rem;
   }
   .hero-search_submit {
+    width: 100%;
     min-height: 3.75rem;
     font-size: var(--text-s);
     color: var(--skyrule--ink);
@@ -132,6 +115,27 @@
     opacity: 0.6;
     cursor: progress;
   }
+
+  /* ── Field skins ── */
+  .hero-search :global(.form_field-wrapper) { display: flex; flex-direction: column; }
+  .is-date :global(.form_input) { padding-right: 2.75rem; }
+  .is-date :global(.form_input[readonly]) {
+    background-color: var(--base-color-neutral--white);
+    cursor: pointer;
+  }
+  .hero-search_cal {
+    position: absolute;
+    right: 1rem;
+    bottom: 1.3rem;
+    color: #66707a;
+    pointer-events: none;
+  }
+  .hero-search :global(.form_input:disabled) {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  /* ── State visibility ── */
   .hero-search_error {
     margin-top: 1rem;
     color: #ffb4a8;
@@ -150,23 +154,23 @@
     text-decoration: underline;
     font-size: var(--text-s);
   }
-  .hero-search.is-done .hero-search_top,
   .hero-search.is-done form { display: none; }
   .hero-search.is-done .hero-search_success { display: block; }
   [data-panel] { display: none; }
   [data-panel].is-active { display: block; }
+
+  /* ── Responsive ── */
   @media (max-width: 991px) {
     .hero-search_fields,
-    .hero-search_fields.is-hotels,
-    .hero-search_contact { grid-template-columns: 1fr 1fr; }
-    .hero-search_submit { grid-column: 1 / -1; }
+    .hero-search_fields.is-hotels { grid-template-columns: 1fr 1fr; }
+    .hero-search_contact { grid-template-columns: 1fr; }
   }
   @media (max-width: 479px) {
     .hero-search_fields,
-    .hero-search_fields.is-hotels,
-    .hero-search_contact { grid-template-columns: 1fr; }
+    .hero-search_fields.is-hotels { grid-template-columns: 1fr; }
   }
 </style>
+
 <style is:global>
   /* shadcn-style skin for the flatpickr popup (rendered at body level, so
      these can't be component-scoped; the `body` prefix outranks flatpickr's
@@ -228,51 +232,55 @@
   body .flatpickr-months .flatpickr-next-month:hover svg { fill: currentColor; }
 
   /* Muted weekday labels */
-  body span.flatpickr-weekday { color: #71717a; font-size: 0.8rem; font-weight: 400; }
+  body .flatpickr-weekdays { margin-bottom: 0.25rem; }
+  body span.flatpickr-weekday {
+    color: #71717a;
+    font-size: 0.75rem;
+    font-weight: 400;
+  }
 
-  /* 7-column grid at exactly 7 × 36px (shadcn's w-9 cells). Without this,
-     the 36px max-width beats flatpickr's 14.28% flex-basis and rows wrap at
-     8 cells, misaligning days from the weekday header. */
-  body .flatpickr-days { width: 252px; }
-  body .dayContainer { width: 252px; min-width: 252px; max-width: 252px; }
-
-  /* Day cells: square, rounded-md */
+  /* Day cells */
+  body .flatpickr-days { width: auto; }
   body .flatpickr-day {
+    width: 2.25rem;
     height: 2.25rem;
-    max-width: 2.25rem;
     line-height: 2.25rem;
     border-radius: 0.375rem;
     border: none;
-    font-size: 0.875rem;
     color: #09090b;
+    font-size: 0.8125rem;
+    max-width: none;
   }
-  body .flatpickr-day:hover,
-  body .flatpickr-day:focus,
-  body .flatpickr-day.prevMonthDay:hover,
-  body .flatpickr-day.nextMonthDay:hover { background: #f4f4f5; }
-  body .flatpickr-day.today { background: #f4f4f5; color: #09090b; }
-  body .flatpickr-day.selected,
-  body .flatpickr-day.selected:focus,
-  body .flatpickr-day.selected:hover {
+  body .flatpickr-day:hover { background: #f4f4f5; }
+  body .flatpickr-day.today { border: 1px solid var(--skyrule--green); }
+  body .flatpickr-day.selected {
     background: var(--skyrule--green);
     color: var(--skyrule--ink);
-    font-weight: 500;
   }
-  body .flatpickr-day.prevMonthDay,
-  body .flatpickr-day.nextMonthDay { color: #a1a1aa; }
+  body .flatpickr-day.selected:hover {
+    background: var(--skyrule--green-hover);
+    color: var(--skyrule--ink);
+  }
   body .flatpickr-day.flatpickr-disabled,
   body .flatpickr-day.flatpickr-disabled:hover { color: #d4d4d8; background: none; }
+  body .flatpickr-day.prevMonthDay,
+  body .flatpickr-day.nextMonthDay { color: #a1a1aa; }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css"/>
 <script is:inline src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
 
+<!-- TABS: outside the form card, centered above -->
+<div class="hero-search_tabs" role="tablist" aria-label="What do you need?">
+  <button type="button" role="tab" aria-selected="true" class="hero-search_tab is-active" data-tab="flights">Flights</button>
+  <button type="button" role="tab" aria-selected="false" class="hero-search_tab" data-tab="hotels">Hotels</button>
+</div>
+
+<!-- CARD: form panels only -->
 <div class="hero-search">
-  <div class="hero-search_top">
-    <div class="hero-search_tabs" role="tablist" aria-label="What do you need?">
-      <button type="button" role="tab" aria-selected="true" class="hero-search_tab is-active" data-tab="flights">Flights</button>
-      <button type="button" role="tab" aria-selected="false" class="hero-search_tab" data-tab="hotels">Hotels</button>
-    </div>
-    <div class="hero-search_minis" data-minis="flights">
+
+  <!-- ── Flights panel ── -->
+  <form data-panel="flights" class="is-active" novalidate>
+    <div class="hero-search_minis">
       <select class="hero-search_mini" name="trip-type" aria-label="Trip type">
         <option>Round trip</option>
         <option>One way</option>
@@ -291,22 +299,6 @@
         <option>First</option>
       </select>
     </div>
-    <div class="hero-search_minis" data-minis="hotels" hidden>
-      <select class="hero-search_mini" name="rooms" aria-label="Rooms">
-        <option>1 room</option>
-        <option>2 rooms</option>
-        <option>3+ rooms</option>
-      </select>
-      <select class="hero-search_mini" name="guests" aria-label="Guests">
-        <option>1 guest</option>
-        <option>2 guests</option>
-        <option>3 guests</option>
-        <option>4+ guests</option>
-      </select>
-    </div>
-  </div>
-
-  <form data-panel="flights" class="is-active" novalidate>
     <div class="hero-search_fields">
       <div class="form_field-wrapper">
         <label for="hs-from" class="form_field-label is-alternate">From*</label>
@@ -336,11 +328,27 @@
         <label for="hs-email" class="form_field-label is-alternate">Email address*</label>
         <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-email" required/>
       </div>
+    </div>
+    <div class="hero-search_submit-row">
       <button type="submit" class="hero-search_submit">Request quote</button>
     </div>
   </form>
 
+  <!-- ── Hotels panel ── -->
   <form data-panel="hotels" novalidate>
+    <div class="hero-search_minis">
+      <select class="hero-search_mini" name="rooms" aria-label="Rooms">
+        <option>1 room</option>
+        <option>2 rooms</option>
+        <option>3+ rooms</option>
+      </select>
+      <select class="hero-search_mini" name="guests" aria-label="Guests">
+        <option>1 guest</option>
+        <option>2 guests</option>
+        <option>3 guests</option>
+        <option>4+ guests</option>
+      </select>
+    </div>
     <div class="hero-search_fields is-hotels">
       <div class="form_field-wrapper">
         <label for="hs-city" class="form_field-label is-alternate">Destination*</label>
@@ -366,6 +374,8 @@
         <label for="hs-hemail" class="form_field-label is-alternate">Email address*</label>
         <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-hemail" required/>
       </div>
+    </div>
+    <div class="hero-search_submit-row">
       <button type="submit" class="hero-search_submit">Request quote</button>
     </div>
   </form>
@@ -381,9 +391,10 @@
 
 <script>
   const root = document.querySelector(".hero-search");
+  const tabsEl = document.querySelector(".hero-search_tabs");
 
-  // Tab switching (values persist across switches)
-  const tabs = root.querySelectorAll(".hero-search_tab");
+  // Tab switching
+  const tabs = tabsEl.querySelectorAll(".hero-search_tab");
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       tabs.forEach((t) => {
@@ -393,15 +404,10 @@
       });
       root.querySelectorAll("[data-panel]").forEach((p) =>
         p.classList.toggle("is-active", p.dataset.panel === tab.dataset.tab));
-      root.querySelectorAll("[data-minis]").forEach((m) =>
-        (m.hidden = m.dataset.minis !== tab.dataset.tab));
     });
   });
 
-  // Modern calendar popups (flatpickr): friendly display format on a visible
-  // altInput that carries the design system's input skin, ISO value on the
-  // original (named) input, no past dates, and the return/check-out pickers
-  // can't precede the outbound date.
+  // Modern calendar popups (flatpickr)
   const dateOpts = {
     altInput: true,
     altInputClass: "form_input w-input",
@@ -409,7 +415,7 @@
     dateFormat: "Y-m-d",
     minDate: "today",
     disableMobile: true,
-    monthSelectorType: "static", // plain "July 2026" header, shadcn-style
+    monthSelectorType: "static",
   };
   const fpReturn = flatpickr("#hs-return", dateOpts);
   const fpDepart = flatpickr("#hs-depart", { ...dateOpts, onChange: (d) => d[0] && fpReturn.set("minDate", d[0]) });
@@ -418,21 +424,20 @@
   document.querySelectorAll(".hero-search input.flatpickr-input").forEach((i) => {
     const fp = i._flatpickr;
     fp.altInput.placeholder = "Select date";
-    fp.altInput.required = fp.input.required; // so empty-field validity bubbles show on the visible input
+    fp.altInput.required = fp.input.required;
   });
 
   // One-way trips have no return date
   const tripType = root.querySelector('[name="trip-type"]');
-  tripType.addEventListener("change", () => {
-    const oneWay = tripType.value === "One way";
-    if (oneWay) fpReturn.clear();
-    fpReturn.altInput.disabled = oneWay;
-  });
+  if (tripType) {
+    tripType.addEventListener("change", () => {
+      const oneWay = tripType.value === "One way";
+      if (oneWay) fpReturn.clear();
+      fpReturn.altInput.disabled = oneWay;
+    });
+  }
 
-  // Submit — the enquiry is emailed to Skyrule via the FormSubmit relay
-  // (free, no backend; the inbox owner clicks a one-time activation link
-  // that arrives with the first submission). To move to a serverless
-  // sender later, only ENDPOINT and the fetch below need to change.
+  // Submit — emailed via FormSubmit relay
   const ENDPOINT = "https://formsubmit.co/ajax/enquiries@skyruletravels.com";
   root.querySelectorAll("form[data-panel]").forEach((form) => {
     form.addEventListener("submit", async (e) => {
@@ -444,11 +449,10 @@
       if (!valid) return;
       const payload = Object.fromEntries(new FormData(form));
       payload.kind = form.dataset.panel;
-      root.querySelectorAll("[data-minis]:not([hidden]) select").forEach((s) => (payload[s.name] = s.value));
       payload._subject = payload.kind === "flights"
         ? `Flight quote request: ${payload.from} -> ${payload.to}`
         : `Hotel quote request: ${payload.destination}`;
-      payload._replyto = payload.email; // Reply in the inbox goes to the customer
+      payload._replyto = payload.email;
       payload._template = "table";
       payload._captcha = "false";
 
@@ -466,6 +470,7 @@
         });
         if (!res.ok) throw new Error(String(res.status));
         root.classList.add("is-done");
+        tabsEl.style.display = "none";
       } catch {
         errorBox.hidden = false;
       } finally {
@@ -475,5 +480,5 @@
     });
   });
 
-  root.querySelector(".hero-search_reset").addEventListener("click", () => root.classList.remove("is-done"));
+  root.querySelector(".hero-search_reset").addEventListener("click", () => { root.classList.remove("is-done"); tabsEl.style.display = ""; });
 </script>
