@@ -15,7 +15,7 @@
     display: flex;
     justify-content: center;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   .hero-search_tab {
     font-size: var(--text-s);
@@ -157,7 +157,14 @@
   .hero-search.is-done form { display: none; }
   .hero-search.is-done .hero-search_success { display: block; }
   [data-panel] { display: none; }
-  [data-panel].is-active { display: block; }
+  [data-panel].is-active {
+    display: block;
+    animation: hero-panel-in 0.28s ease;
+  }
+  @keyframes hero-panel-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
   /* ── Responsive ── */
   @media (max-width: 991px) {
