@@ -26,6 +26,15 @@ const year = new Date().getFullYear();
     .footer_component {
       height: auto;
     }
+    /* Benchmark's 479px rule sets flex-flow:column on .footer_link-list, but
+       the element is display:grid (inherited from the 767px breakpoint) —
+       flex-flow has no effect on a grid container, so it stayed locked to
+       grid-template-columns:1fr 1fr 1fr and squished 4 columns of links
+       into 3 narrow lanes. Force single-column grid so it actually stacks. */
+    .footer_link-list {
+      grid-template-columns: 1fr;
+      row-gap: 2.5rem;
+    }
   }
 </style>
 
