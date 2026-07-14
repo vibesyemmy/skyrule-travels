@@ -15,7 +15,8 @@
     display: flex;
     justify-content: center;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
   }
   .hero-search_tab {
     font-size: var(--text-s);
@@ -280,6 +281,9 @@
 <div class="hero-search_tabs" role="tablist" aria-label="What do you need?">
   <button type="button" role="tab" aria-selected="true" class="hero-search_tab is-active" data-tab="flights">Flights</button>
   <button type="button" role="tab" aria-selected="false" class="hero-search_tab" data-tab="hotels">Hotels</button>
+  <button type="button" role="tab" aria-selected="false" class="hero-search_tab" data-tab="visa">Visa</button>
+  <button type="button" role="tab" aria-selected="false" class="hero-search_tab" data-tab="packages">Packages</button>
+  <button type="button" role="tab" aria-selected="false" class="hero-search_tab" data-tab="cars">Cars</button>
 </div>
 
 <!-- CARD: form panels only -->
@@ -387,6 +391,117 @@
     </div>
   </form>
 
+  <!-- ── Visa panel ── -->
+  <form data-panel="visa" novalidate>
+    <div class="hero-search_minis">
+      <select class="hero-search_mini" name="visa-purpose" aria-label="Purpose">
+        <option>Tourism</option>
+        <option>Business</option>
+        <option>Study</option>
+        <option>Transit</option>
+      </select>
+      <select class="hero-search_mini" name="travellers" aria-label="Travellers">
+        <option>1 traveller</option>
+        <option>2 travellers</option>
+        <option>3 travellers</option>
+        <option>4+ travellers</option>
+      </select>
+    </div>
+    <div class="hero-search_fields" style="grid-template-columns:1fr 1fr">
+      <div class="form_field-wrapper">
+        <label for="hs-visa-country" class="form_field-label is-alternate">Destination country*</label>
+        <input class="form_input w-input" maxlength="256" name="destination" placeholder="e.g. United Kingdom" type="text" id="hs-visa-country" required/>
+      </div>
+      <div class="form_field-wrapper">
+        <label for="hs-visa-nationality" class="form_field-label is-alternate">Your nationality*</label>
+        <input class="form_input w-input" maxlength="256" name="nationality" placeholder="e.g. Nigeria" type="text" id="hs-visa-nationality" required/>
+      </div>
+    </div>
+    <div class="hero-search_contact">
+      <div class="form_field-wrapper">
+        <label for="hs-vname" class="form_field-label is-alternate">Your name*</label>
+        <input class="form_input w-input" maxlength="256" name="name" placeholder="Ada Obi" type="text" id="hs-vname" required/>
+      </div>
+      <div class="form_field-wrapper">
+        <label for="hs-vemail" class="form_field-label is-alternate">Email address*</label>
+        <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-vemail" required/>
+      </div>
+    </div>
+    <div class="hero-search_submit-row">
+      <button type="submit" class="hero-search_submit">Request visa assistance</button>
+    </div>
+  </form>
+
+  <!-- ── Packages panel ── -->
+  <form data-panel="packages" novalidate>
+    <div class="hero-search_minis">
+      <select class="hero-search_mini" name="package-type" aria-label="Package type">
+        <option>Honeymoon</option>
+        <option>Family holiday</option>
+        <option>Group getaway</option>
+        <option>Weekend break</option>
+        <option>Custom</option>
+      </select>
+      <select class="hero-search_mini" name="travellers" aria-label="Travellers">
+        <option>1 traveller</option>
+        <option>2 travellers</option>
+        <option>3 travellers</option>
+        <option>4 travellers</option>
+        <option>5+ travellers</option>
+      </select>
+    </div>
+    <div class="hero-search_fields" style="grid-template-columns:1fr 1fr">
+      <div class="form_field-wrapper">
+        <label for="hs-pkg-dest" class="form_field-label is-alternate">Preferred destination</label>
+        <input class="form_input w-input" maxlength="256" name="destination" placeholder="e.g. Santorini, Dubai" type="text" id="hs-pkg-dest"/>
+      </div>
+      <div class="form_field-wrapper">
+        <label for="hs-pkg-notes" class="form_field-label is-alternate">Any special requests?</label>
+        <input class="form_input w-input" maxlength="256" name="notes" placeholder="Budget, dates, preferences..." type="text" id="hs-pkg-notes"/>
+      </div>
+    </div>
+    <div class="hero-search_contact">
+      <div class="form_field-wrapper">
+        <label for="hs-pname" class="form_field-label is-alternate">Your name*</label>
+        <input class="form_input w-input" maxlength="256" name="name" placeholder="Ada Obi" type="text" id="hs-pname" required/>
+      </div>
+      <div class="form_field-wrapper">
+        <label for="hs-pemail" class="form_field-label is-alternate">Email address*</label>
+        <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-pemail" required/>
+      </div>
+    </div>
+    <div class="hero-search_submit-row">
+      <button type="submit" class="hero-search_submit">Request package quote</button>
+    </div>
+  </form>
+
+  <!-- ── Cars panel ── -->
+  <form data-panel="cars" novalidate>
+    <div class="hero-search_fields" style="grid-template-columns:1fr 1fr">
+      <div class="form_field-wrapper">
+        <label for="hs-car-pickup" class="form_field-label is-alternate">Pick-up location*</label>
+        <input class="form_input w-input" maxlength="256" name="pickup" placeholder="e.g. Lagos Airport" type="text" id="hs-car-pickup" required/>
+      </div>
+      <div class="form_field-wrapper">
+        <label for="hs-car-dropoff" class="form_field-label is-alternate">Drop-off location</label>
+        <input class="form_input w-input" maxlength="256" name="dropoff" placeholder="Same as pick-up" type="text" id="hs-car-dropoff"/>
+      </div>
+    </div>
+    <div class="hero-search_contact">
+      <div class="form_field-wrapper">
+        <label for="hs-cname" class="form_field-label is-alternate">Your name*</label>
+        <input class="form_input w-input" maxlength="256" name="name" placeholder="Ada Obi" type="text" id="hs-cname" required/>
+      </div>
+      <div class="form_field-wrapper">
+        <label for="hs-cemail" class="form_field-label is-alternate">Email address*</label>
+        <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-cemail" required/>
+      </div>
+    </div>
+    <div class="hero-search_submit-row">
+      <button type="submit" class="hero-search_submit">Request car hire</button>
+    </div>
+  </form>
+
   <div class="hero-search_error" hidden role="alert">Something went wrong sending your request. Please try again, or reach us directly at <a href="mailto:enquiries@skyruletravels.com">enquiries@skyruletravels.com</a> or <a href="tel:+2348061659861">0806 165 9861</a>.</div>
 
   <div class="hero-search_success" role="status">
@@ -458,7 +573,13 @@
       payload.kind = form.dataset.panel;
       payload._subject = payload.kind === "flights"
         ? `Flight quote request: ${payload.from} -> ${payload.to}`
-        : `Hotel quote request: ${payload.destination}`;
+        : payload.kind === "hotels"
+        ? `Hotel quote request: ${payload.destination}`
+        : payload.kind === "visa"
+        ? `Visa assistance request: ${payload.destination}`
+        : payload.kind === "packages"
+        ? `Package quote request: ${payload.destination || "Custom"}`
+        : `Car hire request: ${payload.pickup}`;
       payload._replyto = payload.email;
       payload._template = "table";
       payload._captcha = "false";
