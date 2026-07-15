@@ -44,7 +44,11 @@ import HeroSearch from './HeroSearch.astro';
   /* Centered hero: copy and search bar sit on the page axis (the benchmark
      lays the hero out left-aligned; buttons were removed with the change). */
   .hero-home_content { justify-content: center; } /* row flex: its single child shrinks to fit and sat at flex-start */
+  /* Full-width chain down to the search card: with the shrink-to-fit default,
+     the card hugged whichever tab panel was active and jumped width on switch. */
+  .hero-home_content > .padding-section-large.is-hero-home { width: 100%; }
   .hero-home_component {
+    width: 100%;
     align-items: center;
     /* The benchmark space-betweens the column (title top, card bottom),
        stretching a huge gap between copy and form — cluster them instead. */
@@ -76,11 +80,15 @@ import HeroSearch from './HeroSearch.astro';
     background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.738) 19%, rgba(0, 0, 0, 0.541) 34%, rgba(0, 0, 0, 0.382) 47%, rgba(0, 0, 0, 0.278) 56.5%, rgba(0, 0, 0, 0.194) 65%, rgba(0, 0, 0, 0.126) 73%, rgba(0, 0, 0, 0.075) 80.2%, rgba(0, 0, 0, 0.042) 86.1%, rgba(0, 0, 0, 0.021) 91%, rgba(0, 0, 0, 0.008) 95.2%, rgba(0, 0, 0, 0.002) 98.2%, transparent 100%);
   }
 
-  /* Hero background: plane taking off from airport */
+  /* Hero background: plane taking off from airport, with a dark scrim
+     layered over it (multi-background keeps it behind all children) so the
+     hero copy stays legible against the bright sky. */
   .parallax__visuals {
-    background-image: url('/images/hero-plane-bg.jpg');
-    background-position: 50% 50%;
-    background-size: cover;
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.45) 100%),
+      url('/images/hero-plane-bg.jpg');
+    background-position: 50% 50%, 50% 50%;
+    background-size: cover, cover;
   }
 </style>
 <header data-theme="dark" class="section_hero-home">
@@ -100,9 +108,9 @@ import HeroSearch from './HeroSearch.astro';
                           <div class="header-text-wrap">
                             <div class="header-top">
                               <div class="header-eyebrow-text">Skyrule Travels — beyond your dream, within your reach.</div>
-                              <h1 class="heading-style">Discover Your Next Destination. Explore the world's most captivating places with exclusive travel offers.</h1>
+                              <h1 class="heading-style">Discover Your Next Destination.</h1>
                             </div>
-                            <div class="hero_text-wrap"><p class="body-text">Flights, hotels, visas and airport pick-up — business or pleasure. Tell us where you're going; we handle everything in between.</p></div>
+                            <div class="hero_text-wrap"><p class="body-text">Explore the world's most captivating places with exclusive travel offers.</p></div>
                           </div>
                         </div>
                       </div>
