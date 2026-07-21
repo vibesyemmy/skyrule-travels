@@ -121,7 +121,19 @@ ${fields
       secure: Number(env.SMTP_PORT || 587) === 465,
       auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
     });
-    await transporter.sendMail(mail);
+    try {
+      await transporter.sendMail(mail);
+    } catch (err: any) {
+      // Some providers (notably Yahoo) reject ANY foreign-domain Reply-To as
+      // spoof-suspicious (550 at DATA). Retry once without the header — the
+      // customer's email address is still in the message body.
+      if (mail.replyTo && (err?.responseCode === 550 || err?.code === "EMESSAGE")) {
+        const { replyTo, ...withoutReplyTo } = mail;
+        await transporter.sendMail(withoutReplyTo);
+      } else {
+        throw err;
+      }
+    }
     return json(200, { ok: true });
   } catch (err) {
     console.error("[enquiry] send failed:", err);
