@@ -112,6 +112,7 @@
     white-space: nowrap;
   }
   .hero-search_submit:hover { background-color: var(--skyrule--green-hover); }
+  .hero-search_gotcha { position: absolute; left: -9999px; } /* honeypot */
   .hero-search_submit:disabled {
     opacity: 0.6;
     cursor: progress;
@@ -340,6 +341,7 @@
         <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-email" required/>
       </div>
     </div>
+    <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hero-search_gotcha"/>
     <div class="hero-search_submit-row">
       <button type="submit" class="hero-search_submit">Request quote</button>
     </div>
@@ -386,6 +388,7 @@
         <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-hemail" required/>
       </div>
     </div>
+    <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hero-search_gotcha"/>
     <div class="hero-search_submit-row">
       <button type="submit" class="hero-search_submit">Request quote</button>
     </div>
@@ -427,6 +430,7 @@
         <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-vemail" required/>
       </div>
     </div>
+    <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hero-search_gotcha"/>
     <div class="hero-search_submit-row">
       <button type="submit" class="hero-search_submit">Request visa assistance</button>
     </div>
@@ -470,6 +474,7 @@
         <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-pemail" required/>
       </div>
     </div>
+    <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hero-search_gotcha"/>
     <div class="hero-search_submit-row">
       <button type="submit" class="hero-search_submit">Request package quote</button>
     </div>
@@ -497,6 +502,7 @@
         <input class="form_input w-input" maxlength="256" name="email" placeholder="name@example.com" type="email" id="hs-cemail" required/>
       </div>
     </div>
+    <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hero-search_gotcha"/>
     <div class="hero-search_submit-row">
       <button type="submit" class="hero-search_submit">Request car hire</button>
     </div>
@@ -559,8 +565,11 @@
     });
   }
 
-  // Submit — emailed via FormSubmit relay
-  const ENDPOINT = "https://formsubmit.co/ajax/enquiries@skyruletravels.com";
+  // Submit — emailed to Skyrule by the site's own backend (POST /api/enquiry
+  // -> SMTP via Nodemailer; see src/pages/api/enquiry.ts). The server
+  // composes the subject/body per enquiry kind and sets Reply-To to the
+  // customer's address.
+  const ENDPOINT = "/api/enquiry";
   root.querySelectorAll("form[data-panel]").forEach((form) => {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -571,18 +580,6 @@
       if (!valid) return;
       const payload = Object.fromEntries(new FormData(form));
       payload.kind = form.dataset.panel;
-      payload._subject = payload.kind === "flights"
-        ? `Flight quote request: ${payload.from} -> ${payload.to}`
-        : payload.kind === "hotels"
-        ? `Hotel quote request: ${payload.destination}`
-        : payload.kind === "visa"
-        ? `Visa assistance request: ${payload.destination}`
-        : payload.kind === "packages"
-        ? `Package quote request: ${payload.destination || "Custom"}`
-        : `Car hire request: ${payload.pickup}`;
-      payload._replyto = payload.email;
-      payload._template = "table";
-      payload._captcha = "false";
 
       const btn = form.querySelector(".hero-search_submit");
       const label = btn.textContent;
