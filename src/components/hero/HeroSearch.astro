@@ -407,7 +407,7 @@
     <div class="hero-search_fields is-hotels">
       <div class="form_field-wrapper">
         <label for="hs-city" class="form_field-label is-alternate">Destination*</label>
-        <input class="form_input w-input" maxlength="256" name="destination" placeholder="City or hotel" type="text" id="hs-city" data-suggest="city" autocomplete="off" required/>
+        <input class="form_input w-input" maxlength="256" name="destination" placeholder="City or hotel" type="text" id="hs-city" data-suggest="hotel" autocomplete="off" required/>
       </div>
       <div class="form_field-wrapper is-date">
         <label for="hs-checkin" class="form_field-label is-alternate">Check-in*</label>
@@ -607,11 +607,12 @@
     });
   }
 
-  // Location autocomplete — bundled OpenFlights-derived dataset
-  // (public/data/airports.json: [[IATA, airport name, city, country], ...]).
-  // Lazy-loaded on first focus; the city and country pools for the hotel/
-  // package/visa fields are derived from the same rows, so one file powers
-  // all six [data-suggest] inputs.
+  // Location autocomplete — bundled datasets, lazy-loaded on first focus:
+  //   airports.json [[IATA, airport name, city, country], ...] (OpenFlights)
+  //     -> airport suggestions for flights; city/country pools derived
+  //        from the same rows for the package/visa fields
+  //   hotels.json   [[hotel name, city, country], ...] (curated well-known
+  //     properties) -> mixed with cities in the hotels-tab Destination field
   let airportsPromise = null;
   const loadAirports = () => (airportsPromise ??= fetch("/data/airports.json")
     .then((r) => r.json())
@@ -620,6 +621,8 @@
       cities: [...new Set(rows.filter((r) => r[2]).map((r) => `${r[2]}, ${r[3]}`))].sort(),
       countries: [...new Set(rows.map((r) => r[3]))].sort(),
     })));
+  let hotelsPromise = null;
+  const loadHotels = () => (hotelsPromise ??= fetch("/data/hotels.json").then((r) => r.json()));
 
   // 2 = prefix match, 1 = substring match, -1 = miss
   const rank = (hay, q) => {
@@ -627,7 +630,7 @@
     return i < 0 ? -1 : i === 0 ? 2 : 1;
   };
 
-  const suggestFor = (kind, data, q) => {
+  const suggestFor = (kind, data, q, hotels) => {
     if (kind === "airport") {
       const scored = [];
       for (const [iata, name, city, country] of data.rows) {
@@ -646,6 +649,24 @@
         .sort((a, b) => b.score - a.score || b.intl - a.intl || a.len - b.len)
         .slice(0, 8);
     }
+    if (kind === "hotel") {
+      const cities = data.cities
+        .map((value) => ({ score: rank(value, q), value }))
+        .filter((s) => s.score > 0)
+        .sort((a, b) => b.score - a.score);
+      const names = hotels
+        .map(([name, city, country]) => ({
+          score: rank(name, q),
+          value: `${name}, ${city}`,
+          sub: `Hotel — ${city}, ${country}`,
+        }))
+        .filter((s) => s.score > 0)
+        .sort((a, b) => b.score - a.score);
+      // mix: cities lead, but never crowd matching hotels out entirely
+      return cities.length && names.length
+        ? [...cities.slice(0, 4), ...names.slice(0, 4)]
+        : [...cities, ...names].slice(0, 8);
+    }
     const pool = kind === "city" ? data.cities : data.countries;
     return pool
       .map((value) => ({ score: rank(value, q), value }))
@@ -655,6 +676,7 @@
   };
 
   root.querySelectorAll("input[data-suggest]").forEach((input) => {
+    const kind = input.dataset.suggest;
     const box = document.createElement("div");
     box.className = "hero-search_suggest";
     box.hidden = true;
@@ -670,7 +692,8 @@
       const q = input.value.trim().toLowerCase();
       if (q.length < 2) return close();
       const data = await loadAirports();
-      items = suggestFor(input.dataset.suggest, data, q);
+      const hotels = kind === "hotel" ? await loadHotels() : null;
+      items = suggestFor(kind, data, q, hotels);
       hilite = -1;
       // the await can outlive focus (fast typists tabbing away mid-fetch)
       if (!items.length || document.activeElement !== input) return close();
@@ -694,7 +717,7 @@
       box.hidden = false;
     };
 
-    input.addEventListener("focus", loadAirports);
+    input.addEventListener("focus", () => { loadAirports(); if (kind === "hotel") loadHotels(); });
     input.addEventListener("input", render);
     input.addEventListener("blur", close);
     input.addEventListener("keydown", (e) => {
