@@ -1,10 +1,10 @@
 ---
 // Hero flight/hotel enquiry widget — travelbeta.com-style tabbed search bar,
 // built as LEAD CAPTURE: Skyrule has no live booking engine, so the traveller
-// describes the trip and the request is emailed to the team via the
-// FormSubmit relay (no backend required; see the submit handler). The inbox
-// owner must click FormSubmit's one-time activation link, which arrives with
-// the first real submission.
+// describes the trip and the request is emailed to the team by our own
+// backend (POST /api/enquiry -> SMTP; see src/pages/api/enquiry.ts).
+// Location fields autocomplete from a bundled OpenFlights-derived dataset
+// (public/data/airports.json) — no external API or key.
 // Sits in the hero title layer, which is locked to 100svh on desktop.
 // Tabs are OUTSIDE the form card; mini-selects are INSIDE each panel;
 // submit button is full-width on its own row.
@@ -119,7 +119,49 @@
   }
 
   /* ── Field skins ── */
-  .hero-search :global(.form_field-wrapper) { display: flex; flex-direction: column; }
+  .hero-search :global(.form_field-wrapper) { display: flex; flex-direction: column; position: relative; }
+
+  /* ── Autocomplete dropdown: shadcn skin to match the calendar/selects.
+     The box and items are created in JS, so they need :global() to escape
+     Astro's style scoping. ── */
+  .hero-search :global(.hero-search_suggest) {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    right: 0;
+    z-index: 60;
+    max-height: 17rem;
+    overflow-y: auto;
+    padding: 0.25rem;
+    background: #fff;
+    border: 1px solid #e4e4e7;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+  .hero-search :global(.hero-search_suggest[hidden]) { display: none; }
+  .hero-search :global(.hero-search_suggest-item) {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 0.375rem;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #09090b;
+    line-height: 1.35;
+  }
+  .hero-search :global(.hero-search_suggest-item:hover),
+  .hero-search :global(.hero-search_suggest-item.is-hilite) { background: #f4f4f5; }
+  .hero-search :global(.hero-search_suggest-sub) {
+    display: block;
+    font-size: 0.75rem;
+    color: #71717a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .is-date :global(.form_input) { padding-right: 2.75rem; }
   .is-date :global(.form_input[readonly]) {
     background-color: var(--base-color-neutral--white);
@@ -314,11 +356,11 @@
     <div class="hero-search_fields">
       <div class="form_field-wrapper">
         <label for="hs-from" class="form_field-label is-alternate">From*</label>
-        <input class="form_input w-input" maxlength="256" name="from" placeholder="Lagos (LOS)" type="text" id="hs-from" required/>
+        <input class="form_input w-input" maxlength="256" name="from" placeholder="Lagos (LOS)" type="text" id="hs-from" data-suggest="airport" autocomplete="off" required/>
       </div>
       <div class="form_field-wrapper">
         <label for="hs-to" class="form_field-label is-alternate">To*</label>
-        <input class="form_input w-input" maxlength="256" name="to" placeholder="London (LHR)" type="text" id="hs-to" required/>
+        <input class="form_input w-input" maxlength="256" name="to" placeholder="London (LHR)" type="text" id="hs-to" data-suggest="airport" autocomplete="off" required/>
       </div>
       <div class="form_field-wrapper is-date">
         <label for="hs-depart" class="form_field-label is-alternate">Departure*</label>
@@ -365,7 +407,7 @@
     <div class="hero-search_fields is-hotels">
       <div class="form_field-wrapper">
         <label for="hs-city" class="form_field-label is-alternate">Destination*</label>
-        <input class="form_input w-input" maxlength="256" name="destination" placeholder="City or hotel" type="text" id="hs-city" required/>
+        <input class="form_input w-input" maxlength="256" name="destination" placeholder="City or hotel" type="text" id="hs-city" data-suggest="city" autocomplete="off" required/>
       </div>
       <div class="form_field-wrapper is-date">
         <label for="hs-checkin" class="form_field-label is-alternate">Check-in*</label>
@@ -413,11 +455,11 @@
     <div class="hero-search_fields" style="grid-template-columns:1fr 1fr">
       <div class="form_field-wrapper">
         <label for="hs-visa-country" class="form_field-label is-alternate">Destination country*</label>
-        <input class="form_input w-input" maxlength="256" name="destination" placeholder="e.g. United Kingdom" type="text" id="hs-visa-country" required/>
+        <input class="form_input w-input" maxlength="256" name="destination" placeholder="e.g. United Kingdom" type="text" id="hs-visa-country" data-suggest="country" autocomplete="off" required/>
       </div>
       <div class="form_field-wrapper">
         <label for="hs-visa-nationality" class="form_field-label is-alternate">Your nationality*</label>
-        <input class="form_input w-input" maxlength="256" name="nationality" placeholder="e.g. Nigeria" type="text" id="hs-visa-nationality" required/>
+        <input class="form_input w-input" maxlength="256" name="nationality" placeholder="e.g. Nigeria" type="text" id="hs-visa-nationality" data-suggest="country" autocomplete="off" required/>
       </div>
     </div>
     <div class="hero-search_contact">
@@ -457,7 +499,7 @@
     <div class="hero-search_fields" style="grid-template-columns:1fr 1fr">
       <div class="form_field-wrapper">
         <label for="hs-pkg-dest" class="form_field-label is-alternate">Preferred destination</label>
-        <input class="form_input w-input" maxlength="256" name="destination" placeholder="e.g. Santorini, Dubai" type="text" id="hs-pkg-dest"/>
+        <input class="form_input w-input" maxlength="256" name="destination" placeholder="e.g. Santorini, Dubai" type="text" id="hs-pkg-dest" data-suggest="city" autocomplete="off"/>
       </div>
       <div class="form_field-wrapper">
         <label for="hs-pkg-notes" class="form_field-label is-alternate">Any special requests?</label>
@@ -564,6 +606,115 @@
       fpReturn.altInput.disabled = oneWay;
     });
   }
+
+  // Location autocomplete — bundled OpenFlights-derived dataset
+  // (public/data/airports.json: [[IATA, airport name, city, country], ...]).
+  // Lazy-loaded on first focus; the city and country pools for the hotel/
+  // package/visa fields are derived from the same rows, so one file powers
+  // all six [data-suggest] inputs.
+  let airportsPromise = null;
+  const loadAirports = () => (airportsPromise ??= fetch("/data/airports.json")
+    .then((r) => r.json())
+    .then((rows) => ({
+      rows,
+      cities: [...new Set(rows.filter((r) => r[2]).map((r) => `${r[2]}, ${r[3]}`))].sort(),
+      countries: [...new Set(rows.map((r) => r[3]))].sort(),
+    })));
+
+  // 2 = prefix match, 1 = substring match, -1 = miss
+  const rank = (hay, q) => {
+    const i = hay.toLowerCase().indexOf(q);
+    return i < 0 ? -1 : i === 0 ? 2 : 1;
+  };
+
+  const suggestFor = (kind, data, q) => {
+    if (kind === "airport") {
+      const scored = [];
+      for (const [iata, name, city, country] of data.rows) {
+        const score = q.length === 3 && iata.toLowerCase() === q
+          ? 9
+          : Math.max(rank(city, q) * 2, rank(name, q)); // city hits outrank name hits
+        if (score > 0) scored.push({
+          score,
+          intl: name.includes("International") ? 1 : 0, // hubs before airstrips
+          len: (city || name).length,                   // "lag" -> Lagos over LaGrange
+          value: `${city || name} (${iata})`,
+          sub: `${name}${country ? ", " + country : ""}`,
+        });
+      }
+      return scored
+        .sort((a, b) => b.score - a.score || b.intl - a.intl || a.len - b.len)
+        .slice(0, 8);
+    }
+    const pool = kind === "city" ? data.cities : data.countries;
+    return pool
+      .map((value) => ({ score: rank(value, q), value }))
+      .filter((s) => s.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 8);
+  };
+
+  root.querySelectorAll("input[data-suggest]").forEach((input) => {
+    const box = document.createElement("div");
+    box.className = "hero-search_suggest";
+    box.hidden = true;
+    box.setAttribute("role", "listbox");
+    input.after(box);
+    let items = [];
+    let hilite = -1;
+
+    const close = () => { box.hidden = true; box.innerHTML = ""; items = []; hilite = -1; };
+    const pick = (i) => { input.value = items[i].value; close(); };
+
+    const render = async () => {
+      const q = input.value.trim().toLowerCase();
+      if (q.length < 2) return close();
+      const data = await loadAirports();
+      items = suggestFor(input.dataset.suggest, data, q);
+      hilite = -1;
+      // the await can outlive focus (fast typists tabbing away mid-fetch)
+      if (!items.length || document.activeElement !== input) return close();
+      box.innerHTML = "";
+      items.forEach((s, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "hero-search_suggest-item";
+        btn.setAttribute("role", "option");
+        btn.textContent = s.value;
+        if (s.sub) {
+          const sub = document.createElement("span");
+          sub.className = "hero-search_suggest-sub";
+          sub.textContent = s.sub;
+          btn.append(sub);
+        }
+        // mousedown fires before the input's blur, so the pick lands
+        btn.addEventListener("mousedown", (e) => { e.preventDefault(); pick(i); });
+        box.append(btn);
+      });
+      box.hidden = false;
+    };
+
+    input.addEventListener("focus", loadAirports);
+    input.addEventListener("input", render);
+    input.addEventListener("blur", close);
+    input.addEventListener("keydown", (e) => {
+      if (box.hidden) return;
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        const delta = e.key === "ArrowDown" ? 1 : -1;
+        hilite = hilite === -1 && delta === -1 ? items.length - 1 : (hilite + delta + items.length) % items.length;
+        box.querySelectorAll(".hero-search_suggest-item").forEach((el, i) => {
+          el.classList.toggle("is-hilite", i === hilite);
+          if (i === hilite) el.scrollIntoView({ block: "nearest" });
+        });
+      } else if (e.key === "Enter" && hilite >= 0) {
+        e.preventDefault(); // choosing a suggestion must not submit the form
+        pick(hilite);
+      } else if (e.key === "Escape") {
+        close();
+      }
+    });
+  });
 
   // Submit — emailed to Skyrule by the site's own backend (POST /api/enquiry
   // -> SMTP via Nodemailer; see src/pages/api/enquiry.ts). The server
