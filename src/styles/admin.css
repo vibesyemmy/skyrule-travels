@@ -1,0 +1,5 @@
+/* Tailwind for the /admin surface only. These pages are standalone documents
+   that never load the public site's Webflow CSS (drivelodge.css/skyrule.css),
+   so Tailwind's preflight reset is safe here — it cannot touch the marketing
+   pages. Do NOT import this from anything under src/pages that isn't /admin. */
+@import "tailwindcss";
