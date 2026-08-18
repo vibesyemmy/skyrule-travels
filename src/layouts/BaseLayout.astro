@@ -27,6 +27,7 @@ const { navbarStartScrolled = false } = Astro.props;
 
   <link rel="stylesheet" href="/styles/drivelodge.css"/>
   <link rel="stylesheet" href="/styles/skyrule.css"/>
+  <link rel="stylesheet" href="/styles/promo.css"/>
 
   <!-- Font smoothing (from benchmark) — index.astro inlines its own copy of this rule -->
   <style is:global>*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-o-font-smoothing:antialiased;-webkit-appearance:none}</style>
@@ -92,31 +93,44 @@ const { navbarStartScrolled = false } = Astro.props;
 
       if (active.bar) {
         const bar = document.createElement("div");
-        bar.className = "bg-lime-400 text-neutral-900 overflow-hidden transition-[height] duration-300";
-        bar.innerHTML = `<div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-center gap-3 text-sm text-center">
-          ${active.bar.eyebrow ? `<span class="font-semibold uppercase tracking-wide">${active.bar.eyebrow}</span>` : ""}
-          <span class="font-medium">${active.bar.headline}</span>
-          ${active.bar.cta ? `<a href="${active.bar.cta.href}" class="underline underline-offset-2 font-semibold">${active.bar.cta.label}</a>` : ""}
+        bar.className = "promo-bar";
+        bar.setAttribute("data-promo-bar", "");
+        bar.setAttribute("data-promo-id", active.bar.id);
+        bar.innerHTML = `<div class="promo-bar_inner">
+          ${active.bar.eyebrow ? `<span class="promo-bar_eyebrow">${active.bar.eyebrow}</span>` : ""}
+          <span class="promo-bar_headline">${active.bar.headline}</span>
+          ${active.bar.cta ? `<a href="${active.bar.cta.href}" class="promo-bar_cta">${active.bar.cta.label}</a>` : ""}
         </div>`;
         document.body.prepend(bar);
+
+        // Measure the bar's rendered height (it wraps to two lines on narrow
+        // screens) and push the fixed navbar down by that amount. See the
+        // matching rule in /styles/promo.css.
+        const measure = () => {
+          document.documentElement.style.setProperty("--promo-bar-height", `${bar.getBoundingClientRect().height}px`);
+        };
+        measure();
+        window.addEventListener("resize", measure);
       }
 
       // Dismissal is remembered per promo id, so closing it once suppresses
       // it across pages while a new promo still appears.
       if (active.modal && localStorage.getItem(`promo-dismissed-${active.modal.id}`) !== "1") {
         const modal = document.createElement("div");
-        modal.className = "fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4";
+        modal.className = "promo-modal_overlay";
+        modal.setAttribute("data-promo-modal", "");
+        modal.setAttribute("data-promo-id", active.modal.id);
         modal.setAttribute("role", "dialog");
         modal.setAttribute("aria-modal", "true");
-        modal.innerHTML = `<div class="bg-neutral-900 text-neutral-100 rounded-2xl max-w-lg w-full overflow-hidden">
-          ${active.modal.image ? `<img src="${active.modal.image.url}" alt="${active.modal.image.alt}" width="${active.modal.image.width}" height="${active.modal.image.height}" class="w-full h-auto object-cover">` : ""}
-          <div class="p-6">
-            ${active.modal.eyebrow ? `<p class="text-xs uppercase tracking-wide text-lime-400 mb-2">${active.modal.eyebrow}</p>` : ""}
-            <h2 class="text-xl font-semibold mb-2">${active.modal.headline}</h2>
-            <div class="text-sm text-neutral-300">${active.modal.bodyHtml}</div>
-            <div class="mt-5 flex gap-3">
-              ${active.modal.cta ? `<a href="${active.modal.cta.href}" class="rounded-md bg-lime-400 text-neutral-900 font-medium px-4 py-2">${active.modal.cta.label}</a>` : ""}
-              <button type="button" data-promo-dismiss class="rounded-md border border-neutral-700 px-4 py-2">No thanks</button>
+        modal.innerHTML = `<div class="promo-modal_card">
+          ${active.modal.image ? `<img src="${active.modal.image.url}" alt="${active.modal.image.alt}" width="${active.modal.image.width}" height="${active.modal.image.height}" class="promo-modal_image">` : ""}
+          <div class="promo-modal_body">
+            ${active.modal.eyebrow ? `<p class="promo-modal_eyebrow">${active.modal.eyebrow}</p>` : ""}
+            <h2 class="promo-modal_headline">${active.modal.headline}</h2>
+            <div class="promo-modal_content">${active.modal.bodyHtml}</div>
+            <div class="promo-modal_actions">
+              ${active.modal.cta ? `<a href="${active.modal.cta.href}" class="promo-modal_cta">${active.modal.cta.label}</a>` : ""}
+              <button type="button" data-promo-dismiss class="promo-modal_dismiss">No thanks</button>
             </div>
           </div>
         </div>`;
