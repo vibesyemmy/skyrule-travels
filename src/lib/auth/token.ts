@@ -51,7 +51,12 @@ export async function verifyToken<T>(
   now: Date = new Date(),
 ): Promise<(T & { exp: number }) | null> {
   try {
-    const [encoded, signature] = token.split(".");
+    // Exactly two segments. Extra segments are not forgeable — the HMAC covers
+    // the encoded payload — but a token parser guarding admin access should
+    // reject anything malformed rather than quietly ignoring part of it.
+    const parts = token.split(".");
+    if (parts.length !== 2) return null;
+    const [encoded, signature] = parts;
     if (!encoded || !signature) return null;
 
     const expected = await crypto.subtle.sign("HMAC", await hmacKey(secret), encoder.encode(encoded));

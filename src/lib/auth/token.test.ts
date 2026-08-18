@@ -37,6 +37,16 @@ describe("signToken / verifyToken", () => {
     expect(body).not.toBe(forged);
   });
 
+  it("rejects a token carrying extra segments", async () => {
+    const token = await signToken({ email: "a@b.com" }, SECRET, 15, now);
+    expect(await verifyToken(`${token}.extra`, SECRET, now)).toBeNull();
+  });
+
+  it("rejects a token with only one segment", async () => {
+    const token = await signToken({ email: "a@b.com" }, SECRET, 15, now);
+    expect(await verifyToken(token.split(".")[0], SECRET, now)).toBeNull();
+  });
+
   it("rejects a malformed token", async () => {
     expect(await verifyToken("garbage", SECRET, now)).toBeNull();
   });
