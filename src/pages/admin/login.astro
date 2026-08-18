@@ -1,0 +1,46 @@
+---
+export const prerender = false;
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Sign in — Skyrule admin</title>
+  </head>
+  <body class="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center p-6">
+    <main class="w-full max-w-sm">
+      <h1 class="text-xl font-semibold mb-1">Skyrule admin</h1>
+      <p class="text-sm text-neutral-400 mb-6">We'll email you a sign-in link.</p>
+
+      <form id="login-form" class="space-y-3">
+        <label class="block text-sm" for="email">Email address</label>
+        <input id="email" name="email" type="email" required autocomplete="email"
+               class="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2" />
+        <button type="submit"
+                class="w-full rounded-md bg-lime-400 text-neutral-900 font-medium px-3 py-2">
+          Send sign-in link
+        </button>
+      </form>
+
+      <p id="sent" class="hidden mt-4 text-sm text-lime-400">
+        If that address has access, a sign-in link is on its way. It expires in 15 minutes.
+      </p>
+    </main>
+
+    <script>
+      const form = document.getElementById("login-form") as HTMLFormElement;
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const email = (document.getElementById("email") as HTMLInputElement).value;
+        await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        form.classList.add("hidden");
+        document.getElementById("sent")!.classList.remove("hidden");
+      });
+    </script>
+  </body>
+</html>
