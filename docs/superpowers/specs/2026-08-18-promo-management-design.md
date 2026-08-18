@@ -142,7 +142,9 @@ Mutating admin endpoints require a same-site cookie, a JSON content type, and a 
 
 **All other pages** stay static. `BaseLayout.astro` includes a small script that fetches `/api/promo/active` and injects the bar and modal. `/api/promo/active` returns every currently-live promo and carries the same 60-second cache header; the client script uses only the `bar` and `modal` entries, since the homepage section is never client-rendered.
 
-**The homepage must not double-render.** Because the homepage renders all three placements server-side and also inherits `BaseLayout`, the injection script has to stand down there. `BaseLayout` receives a `promosRenderedServerSide` prop, defaulting to `false`, which the homepage sets to `true`; when set, the script is not emitted at all. Without this the homepage would show two announcement bars.
+**No double-render is possible.** `src/pages/index.astro` does not use `BaseLayout` — it carries its own inlined document, marked in the source as an exact copy of the design benchmark, and renders `Navbar` and `Footer` directly. The injection script therefore lives only on the seven pages that do use `BaseLayout`, and the homepage renders its promos server-side without ever running it. No opt-out flag is needed.
+
+**Homepage insertion points.** The three placements are added to `index.astro` as conditional blocks: the bar immediately before `<Navbar />`, the section inside the main wrapper before `<ContactCta />`, and the modal before the closing `<Footer />`. Each renders nothing when no promo is live, so with an empty promo document the benchmark body is byte-for-byte unchanged.
 
 **Modal dismissal** is recorded in `localStorage` keyed by promo id, so closing it once suppresses it across pages — but a new promo still appears.
 
