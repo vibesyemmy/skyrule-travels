@@ -93,4 +93,62 @@ describe("parseDocument", () => {
     const doc = parseDocument({ version: 1, promos: [hostile] });
     expect(doc.promos).toHaveLength(0);
   });
+
+  it("drops a promo whose startsAt is not a parseable date", () => {
+    const doc = parseDocument({
+      version: 1,
+      promos: [{ ...validPromo, startsAt: "draft" }],
+    });
+    expect(doc.promos).toHaveLength(0);
+  });
+
+  it("drops a promo whose endsAt is not a parseable date", () => {
+    const doc = parseDocument({
+      version: 1,
+      promos: [{ ...validPromo, endsAt: "18/08/2026" }],
+    });
+    expect(doc.promos).toHaveLength(0);
+  });
+
+  it("keeps a promo with startsAt: null and a valid ISO endsAt", () => {
+    const doc = parseDocument({
+      version: 1,
+      promos: [{ ...validPromo, startsAt: null, endsAt: "2026-09-01T00:00:00.000Z" }],
+    });
+    expect(doc.promos).toHaveLength(1);
+  });
+
+  it("drops a promo with a whitespace-only headline", () => {
+    const doc = parseDocument({
+      version: 1,
+      promos: [{ ...validPromo, headline: "   " }],
+    });
+    expect(doc.promos).toHaveLength(0);
+  });
+
+  it("drops a promo with an empty-string id", () => {
+    const doc = parseDocument({
+      version: 1,
+      promos: [{ ...validPromo, id: "" }],
+    });
+    expect(doc.promos).toHaveLength(0);
+  });
+
+  it("drops a promo whose image width is Infinity", () => {
+    const { width } = JSON.parse('{"width":1e400}');
+    const doc = parseDocument({
+      version: 1,
+      promos: [{
+        ...validPromo,
+        image: { url: "https://x/y.jpg", width, height: 900, alt: "A plane" },
+      }],
+    });
+    expect(doc.promos).toHaveLength(0);
+  });
+
+  it("returns a fresh object from parseDocument(null) on each call", () => {
+    const a = parseDocument(null);
+    const b = parseDocument(null);
+    expect(a).not.toBe(b);
+  });
 });

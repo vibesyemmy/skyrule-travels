@@ -35,14 +35,29 @@ export interface PromoDocument {
   promos: Promo[];
 }
 
-export const EMPTY_DOCUMENT: PromoDocument = { version: 1, promos: [] };
+export const EMPTY_DOCUMENT: PromoDocument = Object.freeze({
+  version: 1,
+  promos: Object.freeze([]) as Promo[],
+}) as PromoDocument;
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v);
 
 const isString = (v: unknown): v is string => typeof v === "string";
 const isNullOrString = (v: unknown): v is string | null => v === null || isString(v);
+const isNonBlank = (v: unknown): v is string => isString(v) && v.trim().length > 0;
+// A date field is either absent (null) or a string Date.parse can understand.
+// Anything else must be rejected rather than silently accepted — an
+// unparseable date produces Invalid Date, and every comparison against
+// Invalid Date is false, which would make the promo permanently live.
+const isNullOrParseableDate = (v: unknown): v is string | null =>
+  v === null || (isString(v) && !Number.isNaN(Date.parse(v)));
 
+/**
+ * Parses an image field. Returns `null` when there is deliberately no image
+ * (a valid, imageless promo), or `undefined` when the value is present but
+ * malformed — the caller treats `undefined` as "drop the whole promo".
+ */
 function parseImage(raw: unknown): PromoImage | null | undefined {
   if (raw === null) return null;
   if (!isObject(raw)) return undefined;
@@ -50,10 +65,16 @@ function parseImage(raw: unknown): PromoImage | null | undefined {
   // alt is required whenever an image is present — a promo must not ship inaccessible.
   if (!isString(url) || !isString(alt)) return undefined;
   if (typeof width !== "number" || typeof height !== "number") return undefined;
+  if (!Number.isFinite(width) || !Number.isFinite(height)) return undefined;
   if (width <= 0 || height <= 0) return undefined;
   return { url, width, height, alt };
 }
 
+/**
+ * Parses a cta field. Returns `null` when there is deliberately no CTA (a
+ * valid promo without one), or `undefined` when the value is present but
+ * malformed — the caller treats `undefined` as "drop the whole promo".
+ */
 function parseCta(raw: unknown): PromoCta | null | undefined {
   if (raw === null) return null;
   if (!isObject(raw)) return undefined;
@@ -69,11 +90,12 @@ function parsePromo(raw: unknown): Promo | null {
     const { id, placement, enabled, eyebrow, headline, body, bodyHtml,
             startsAt, endsAt, updatedAt, updatedBy } = raw;
 
-    if (!isString(id) || !isString(headline) || !isString(body) || !isString(bodyHtml)) return null;
+    if (!isNonBlank(id) || !isNonBlank(headline)) return null;
+    if (!isString(body) || !isString(bodyHtml)) return null;
     if (!isString(placement) || !PLACEMENTS.includes(placement as Placement)) return null;
     if (typeof enabled !== "boolean") return null;
     if (!isNullOrString(eyebrow)) return null;
-    if (!isNullOrString(startsAt) || !isNullOrString(endsAt)) return null;
+    if (!isNullOrParseableDate(startsAt) || !isNullOrParseableDate(endsAt)) return null;
     if (!isString(updatedAt) || !isString(updatedBy)) return null;
 
     const image = parseImage(raw.image);
@@ -99,7 +121,7 @@ function parsePromo(raw: unknown): Promo | null {
  */
 export function parseDocument(raw: unknown): PromoDocument {
   try {
-    if (!isObject(raw) || !Array.isArray(raw.promos)) return EMPTY_DOCUMENT;
+    if (!isObject(raw) || !Array.isArray(raw.promos)) return { version: 1, promos: [] };
     const promos = raw.promos
       .map(parsePromo)
       .filter((p): p is Promo => p !== null);
@@ -107,6 +129,8 @@ export function parseDocument(raw: unknown): PromoDocument {
   } catch {
     // A hostile input (e.g. a throwing getter or Proxy) must not break a
     // visitor's page — degrade to "no promos" rather than propagating.
-    return EMPTY_DOCUMENT;
+    // A fresh object every time — never the shared EMPTY_DOCUMENT reference,
+    // so a caller mutating one result can't corrupt a later call.
+    return { version: 1, promos: [] };
   }
 }
