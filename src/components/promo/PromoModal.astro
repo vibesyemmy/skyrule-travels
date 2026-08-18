@@ -1,0 +1,31 @@
+---
+import type { Promo } from "../../lib/promos/schema";
+interface Props { promo: Promo }
+const { promo } = Astro.props;
+---
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+     data-promo-modal data-promo-id={promo.id} role="dialog" aria-modal="true"
+     aria-label={promo.headline}>
+  <div class="bg-neutral-900 text-neutral-100 rounded-2xl max-w-lg w-full overflow-hidden">
+    {promo.image && (
+      <img src={promo.image.url} alt={promo.image.alt}
+           width={promo.image.width} height={promo.image.height}
+           class="w-full h-auto object-cover" />
+    )}
+    <div class="p-6">
+      {promo.eyebrow && <p class="text-xs uppercase tracking-wide text-lime-400 mb-2">{promo.eyebrow}</p>}
+      <h2 class="text-xl font-semibold mb-2">{promo.headline}</h2>
+      <div class="text-sm text-neutral-300" set:html={promo.bodyHtml} />
+      <div class="mt-5 flex gap-3">
+        {promo.cta && (
+          <a href={promo.cta.href} class="rounded-md bg-lime-400 text-neutral-900 font-medium px-4 py-2">
+            {promo.cta.label}
+          </a>
+        )}
+        <button type="button" data-promo-dismiss class="rounded-md border border-neutral-700 px-4 py-2">
+          No thanks
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

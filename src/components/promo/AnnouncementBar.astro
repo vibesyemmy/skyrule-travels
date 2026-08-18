@@ -1,0 +1,12 @@
+---
+import type { Promo } from "../../lib/promos/schema";
+interface Props { promo: Promo }
+const { promo } = Astro.props;
+---
+<div class="bg-lime-400 text-neutral-900" data-promo-bar data-promo-id={promo.id}>
+  <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-center gap-3 text-sm text-center">
+    {promo.eyebrow && <span class="font-semibold uppercase tracking-wide">{promo.eyebrow}</span>}
+    <span class="font-medium">{promo.headline}</span>
+    {promo.cta && <a href={promo.cta.href} class="underline underline-offset-2 font-semibold">{promo.cta.label}</a>}
+  </div>
+</div>
