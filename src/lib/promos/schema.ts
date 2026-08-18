@@ -63,27 +63,33 @@ function parseCta(raw: unknown): PromoCta | null | undefined {
 }
 
 function parsePromo(raw: unknown): Promo | null {
-  if (!isObject(raw)) return null;
+  try {
+    if (!isObject(raw)) return null;
 
-  const { id, placement, enabled, eyebrow, headline, body, bodyHtml,
-          startsAt, endsAt, updatedAt, updatedBy } = raw;
+    const { id, placement, enabled, eyebrow, headline, body, bodyHtml,
+            startsAt, endsAt, updatedAt, updatedBy } = raw;
 
-  if (!isString(id) || !isString(headline) || !isString(body) || !isString(bodyHtml)) return null;
-  if (!isString(placement) || !PLACEMENTS.includes(placement as Placement)) return null;
-  if (typeof enabled !== "boolean") return null;
-  if (!isNullOrString(eyebrow)) return null;
-  if (!isNullOrString(startsAt) || !isNullOrString(endsAt)) return null;
-  if (!isString(updatedAt) || !isString(updatedBy)) return null;
+    if (!isString(id) || !isString(headline) || !isString(body) || !isString(bodyHtml)) return null;
+    if (!isString(placement) || !PLACEMENTS.includes(placement as Placement)) return null;
+    if (typeof enabled !== "boolean") return null;
+    if (!isNullOrString(eyebrow)) return null;
+    if (!isNullOrString(startsAt) || !isNullOrString(endsAt)) return null;
+    if (!isString(updatedAt) || !isString(updatedBy)) return null;
 
-  const image = parseImage(raw.image);
-  if (image === undefined) return null;
-  const cta = parseCta(raw.cta);
-  if (cta === undefined) return null;
+    const image = parseImage(raw.image);
+    if (image === undefined) return null;
+    const cta = parseCta(raw.cta);
+    if (cta === undefined) return null;
 
-  return {
-    id, placement: placement as Placement, enabled, eyebrow, headline, body,
-    bodyHtml, image, cta, startsAt, endsAt, updatedAt, updatedBy,
-  };
+    return {
+      id, placement: placement as Placement, enabled, eyebrow, headline, body,
+      bodyHtml, image, cta, startsAt, endsAt, updatedAt, updatedBy,
+    };
+  } catch {
+    // A hostile or unexpected input (e.g. a throwing getter) must not break
+    // the whole document — treat it the same as any other malformed promo.
+    return null;
+  }
 }
 
 /**
@@ -92,9 +98,15 @@ function parsePromo(raw: unknown): Promo | null {
  * so one bad record cannot hide the others.
  */
 export function parseDocument(raw: unknown): PromoDocument {
-  if (!isObject(raw) || !Array.isArray(raw.promos)) return EMPTY_DOCUMENT;
-  const promos = raw.promos
-    .map(parsePromo)
-    .filter((p): p is Promo => p !== null);
-  return { version: 1, promos };
+  try {
+    if (!isObject(raw) || !Array.isArray(raw.promos)) return EMPTY_DOCUMENT;
+    const promos = raw.promos
+      .map(parsePromo)
+      .filter((p): p is Promo => p !== null);
+    return { version: 1, promos };
+  } catch {
+    // A hostile input (e.g. a throwing getter or Proxy) must not break a
+    // visitor's page — degrade to "no promos" rather than propagating.
+    return EMPTY_DOCUMENT;
+  }
 }

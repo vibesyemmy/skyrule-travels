@@ -82,4 +82,15 @@ describe("parseDocument", () => {
     });
     expect(doc.promos).toHaveLength(0);
   });
+
+  it("returns an empty document rather than throwing on a hostile object", () => {
+    const hostile = { get promos() { throw new Error("boom"); } };
+    expect(parseDocument(hostile)).toEqual(EMPTY_DOCUMENT);
+  });
+
+  it("drops a promo whose property access throws", () => {
+    const hostile = { get id() { throw new Error("boom"); } };
+    const doc = parseDocument({ version: 1, promos: [hostile] });
+    expect(doc.promos).toHaveLength(0);
+  });
 });
