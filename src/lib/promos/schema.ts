@@ -35,9 +35,13 @@ export interface PromoDocument {
   promos: Promo[];
 }
 
+// Frozen so that a consumer mutating it fails loudly rather than corrupting
+// the shared constant. parseDocument returns fresh literals rather than this.
+const NO_PROMOS = Object.freeze([]) as readonly Promo[];
+
 export const EMPTY_DOCUMENT: PromoDocument = Object.freeze({
   version: 1,
-  promos: Object.freeze([]) as Promo[],
+  promos: NO_PROMOS as Promo[],
 }) as PromoDocument;
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
