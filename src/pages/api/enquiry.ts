@@ -98,7 +98,13 @@ ${fields
 </table>
 <p style="font-family:sans-serif;color:#666">Sent from the skyruletravels.com enquiry form. Reply to answer ${esc(personName)} directly.</p>`;
 
-  const env = import.meta.env;
+  // Read from process.env, which is where Vercel injects the project's
+  // environment variables into the deployed function. Reading import.meta.env
+  // instead would inline the SMTP credentials into the build output at build
+  // time. (Changing a variable in Vercel still requires a redeploy — Vercel
+  // binds env vars per deployment.) astro.config.mjs mirrors .env into
+  // process.env so `astro dev` reads from the same place.
+  const env = process.env;
   const mail = {
     to: env.MAIL_TO || "enquiries@skyruletravels.com",
     from: env.MAIL_FROM || env.SMTP_USER || "no-reply@skyruletravels.com",

@@ -1,9 +1,17 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { loadEnv } from 'vite';
 
 import react from '@astrojs/react';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
+
+// Mirror .env into process.env. The enquiry endpoint reads its SMTP config
+// from process.env only — that is what Vercel injects into the deployed
+// function. Reading it there instead of import.meta.env keeps the credentials
+// out of the build output, which Vite would otherwise inline. Astro only
+// populates process.env during `astro build`, so this covers `astro dev`.
+Object.assign(process.env, loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), ''));
 
 // https://astro.build/config
 export default defineConfig({
