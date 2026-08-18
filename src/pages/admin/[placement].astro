@@ -9,7 +9,7 @@ import { PLACEMENTS, type Placement } from "../../lib/promos/schema";
 const placement = Astro.params.placement as Placement;
 if (!PLACEMENTS.includes(placement)) return Astro.redirect("/admin");
 
-const { promos } = await promoStore.read({ fresh: true });
+const { promos } = await promoStore.read();
 const promo = promos.find((p) => p.placement === placement) ?? null;
 ---
 <AdminLayout title="Edit promo">

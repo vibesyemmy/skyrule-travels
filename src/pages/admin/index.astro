@@ -20,7 +20,7 @@ const DESCRIPTIONS: Record<Placement, string> = {
 };
 
 const now = new Date();
-const { promos } = await promoStore.read({ fresh: true });
+const { promos } = await promoStore.read();
 
 const slots = PLACEMENTS.map((placement) => {
   const promo = promos.find((p) => p.placement === placement) ?? null;
