@@ -32,6 +32,7 @@
 </script>
 
 <script>
+  import { markConverted } from "../../lib/promos/modal-controller";
 // Enquiry delivery — emailed to Skyrule by the site's own backend (same
 // POST /api/enquiry endpoint as the hero search widget; SMTP via
 // Nodemailer, see src/pages/api/enquiry.ts). The server composes the
@@ -58,6 +59,8 @@ form?.addEventListener("submit", async (e) => {
     if (!res.ok) throw new Error(String(res.status));
     form.hidden = true;
     document.querySelector(".contact-cta_status.is-success").hidden = false;
+    // Someone who just enquired should not then be pitched by the promo modal.
+    markConverted();
   } catch {
     errorBox.hidden = false;
     btn.disabled = false;

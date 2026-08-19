@@ -560,6 +560,7 @@
 </div>
 
 <script>
+  import { markConverted } from "../../lib/promos/modal-controller";
   const root = document.querySelector(".hero-search");
   const tabsEl = document.querySelector(".hero-search_tabs");
 
@@ -769,6 +770,8 @@
         });
         if (!res.ok) throw new Error(String(res.status));
         root.classList.add("is-done");
+        // Someone who just enquired should not then be pitched by the promo modal.
+        markConverted();
         tabsEl.style.display = "none";
       } catch {
         errorBox.hidden = false;

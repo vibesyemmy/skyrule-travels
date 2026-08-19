@@ -143,22 +143,6 @@ body *{color:inherit}a,.w-input,.w-select,.w-tab-link,.w-nav-link,.w-slider-arro
 </div></main>
 {modal && <PromoModal promo={modal} />}
 <Footer /></div>
-{modal && (
-  <script>
-    const modalEl = document.querySelector("[data-promo-modal]");
-    const id = modalEl?.getAttribute("data-promo-id");
-    if (modalEl && id) {
-      if (localStorage.getItem(`promo-dismissed-${id}`) === "1") {
-        modalEl.remove();
-      } else {
-        modalEl.querySelector("[data-promo-dismiss]")?.addEventListener("click", () => {
-          localStorage.setItem(`promo-dismissed-${id}`, "1");
-          modalEl.remove();
-        });
-      }
-    }
-  </script>
-)}
 <!-- ⬆ EXACT BENCHMARK BODY ⬆ -->
 
 <!-- JS Dependencies -->
