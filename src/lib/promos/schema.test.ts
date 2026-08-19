@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseDocument, EMPTY_DOCUMENT, PLACEMENTS } from "./schema";
+import { parseDocument, EMPTY_DOCUMENT, PLACEMENTS, PLACEMENTS_WITH_IMAGE, supportsImage } from "./schema";
 
 const validPromo = {
   id: "abc",
@@ -20,6 +20,30 @@ const validPromo = {
 describe("PLACEMENTS", () => {
   it("has exactly the three supported placements", () => {
     expect(PLACEMENTS).toEqual(["bar", "modal", "section"]);
+  });
+});
+
+describe("supportsImage", () => {
+  it("is false for the announcement bar, which renders no image", () => {
+    expect(supportsImage("bar")).toBe(false);
+  });
+
+  it("is true for the modal", () => {
+    expect(supportsImage("modal")).toBe(true);
+  });
+
+  it("is true for the homepage section", () => {
+    expect(supportsImage("section")).toBe(true);
+  });
+
+  it("lists only placements that render an image", () => {
+    expect(PLACEMENTS_WITH_IMAGE).toEqual(["modal", "section"]);
+  });
+
+  it("covers every placement one way or the other", () => {
+    for (const placement of PLACEMENTS) {
+      expect(typeof supportsImage(placement)).toBe("boolean");
+    }
   });
 });
 

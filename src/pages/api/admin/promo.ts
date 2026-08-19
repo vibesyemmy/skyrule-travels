@@ -3,7 +3,7 @@ import { promoStore } from "../../../lib/promos/store";
 import { renderMarkdown } from "../../../lib/promos/markdown";
 import { watLocalToUtcIso } from "../../../lib/promos/datetime";
 import { sanitizeDimension } from "../../../lib/promos/image";
-import { PLACEMENTS, type Placement, type Promo } from "../../../lib/promos/schema";
+import { PLACEMENTS, supportsImage, type Placement, type Promo } from "../../../lib/promos/schema";
 
 export const prerender = false;
 
@@ -52,7 +52,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const markdown = asString(body.body);
 
   let image: Promo["image"] = null;
-  if (body.image && typeof body.image === "object") {
+  // Enforced server-side too: the bar never renders an image, so accepting one
+  // would just store a file nothing reads.
+  if (supportsImage(placement) && body.image && typeof body.image === "object") {
     const raw = body.image as Record<string, unknown>;
     const url = asString(raw.url);
     const alt = asString(raw.alt);

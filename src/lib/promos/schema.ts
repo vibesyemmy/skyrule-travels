@@ -2,6 +2,18 @@ export type Placement = "bar" | "modal" | "section";
 
 export const PLACEMENTS: Placement[] = ["bar", "modal", "section"];
 
+/**
+ * Placements whose renderers actually display an image.
+ *
+ * The announcement bar shows an eyebrow, a headline and a CTA on one line and
+ * has never rendered an image — so offering the upload there only produced
+ * megabytes of stored files nothing referenced.
+ */
+export const PLACEMENTS_WITH_IMAGE: Placement[] = ["modal", "section"];
+
+export const supportsImage = (placement: Placement): boolean =>
+  PLACEMENTS_WITH_IMAGE.includes(placement);
+
 export interface PromoImage {
   url: string;
   width: number;
