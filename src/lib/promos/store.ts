@@ -16,6 +16,8 @@ import { parseDocument, type Placement, type Promo, type PromoDocument } from ".
  */
 const DOC_PREFIX = "promos/doc-";
 const VERSIONS_KEPT = 5;
+const READ_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 150;
 
 const EMPTY = (): PromoDocument => ({ version: 1, promos: [] });
 
@@ -37,20 +39,61 @@ const newestFirst = (blobs: BlobRecord[]): BlobRecord[] =>
 
 export function createPromoStore(client: BlobClient, fetchImpl: typeof fetch) {
   /**
-   * Read the current document. Never throws — every failure mode (Blob
-   * unreachable, nothing stored yet, corrupt JSON) degrades to an empty
-   * document, so a visitor's page renders exactly as it would with no promos.
+   * Fetch and parse a stored document, retrying transient failures.
+   *
+   * Vercel's blob CDN intermittently answers a public URL with a 403 challenge
+   * page instead of the content — measured at roughly one request in
+   * twenty-five. Treating that as "no promos" would blank the site at random,
+   * so a few quick retries come first. Returns null when the document genuinely
+   * could not be read, which callers distinguish from "there is no document".
+   */
+  async function fetchDocument(url: string): Promise<PromoDocument | null> {
+    for (let attempt = 0; attempt < READ_ATTEMPTS; attempt += 1) {
+      try {
+        const response = await fetchImpl(url, { cache: "no-store" });
+        if (response.ok) return parseDocument(await response.json());
+      } catch {
+        // network blip — fall through to the retry
+      }
+      if (attempt < READ_ATTEMPTS - 1) {
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS * (attempt + 1)));
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Read the current document for RENDERING. Never throws — every failure mode
+   * degrades to an empty document, so a visitor's page renders exactly as it
+   * would with no promos configured.
    */
   async function read(): Promise<PromoDocument> {
     try {
       const { blobs } = await client.list({ prefix: DOC_PREFIX, limit: 100 });
       if (blobs.length === 0) return EMPTY();
-      const response = await fetchImpl(newestFirst(blobs)[0].url, { cache: "no-store" });
-      if (!response.ok) return EMPTY();
-      return parseDocument(await response.json());
+      return (await fetchDocument(newestFirst(blobs)[0].url)) ?? EMPTY();
     } catch {
       return EMPTY();
     }
+  }
+
+  /**
+   * Read the current document BEFORE WRITING. Unlike read(), this throws when a
+   * document exists but cannot be fetched.
+   *
+   * That distinction prevents real data loss: saving replaces the whole
+   * document, so treating an unreadable document as empty would wipe every
+   * other placement. Failing loudly instead surfaces an error the admin shows
+   * while keeping the client's typed copy in the form.
+   */
+  async function readForWrite(): Promise<PromoDocument> {
+    const { blobs } = await client.list({ prefix: DOC_PREFIX, limit: 100 });
+    if (blobs.length === 0) return EMPTY();
+    const document = await fetchDocument(newestFirst(blobs)[0].url);
+    if (!document) {
+      throw new Error("Could not read the current promos; refusing to overwrite them.");
+    }
+    return document;
   }
 
   /**
@@ -93,13 +136,13 @@ export function createPromoStore(client: BlobClient, fetchImpl: typeof fetch) {
    * record per placement is both simpler and what the UI already implies.
    */
   async function save(promo: Promo): Promise<void> {
-    const document = await read();
+    const document = await readForWrite();
     const otherPlacements = document.promos.filter((p) => p.placement !== promo.placement);
     await write({ version: 1, promos: [...otherPlacements, promo] });
   }
 
   async function clear(placement: Placement): Promise<void> {
-    const document = await read();
+    const document = await readForWrite();
     await write({ version: 1, promos: document.promos.filter((p) => p.placement !== placement) });
   }
 

@@ -91,6 +91,54 @@ describe("read", () => {
   });
 });
 
+describe("transient CDN failures", () => {
+  /** Serves a 403 for the first `failures` reads, then succeeds — the observed
+   *  Vercel blob CDN behaviour, roughly 1 request in 25. */
+  function flakyFetch(body: string, failures: number): typeof fetch {
+    let seen = 0;
+    return (async () => {
+      seen += 1;
+      if (seen <= failures) return { ok: false, status: 403, json: async () => ({}) } as Response;
+      return { ok: true, json: async () => JSON.parse(body) } as Response;
+    }) as unknown as typeof fetch;
+  }
+
+  const seeded = { version: 1, promos: [promo({ id: "kept", placement: "section" })] };
+
+  it("read retries past a transient 403 rather than blanking the site", async () => {
+    const { client } = fakeBlob({ promos: seeded.promos });
+    const store = createPromoStore(client, flakyFetch(JSON.stringify(seeded), 1));
+    expect((await store.read()).promos[0].id).toBe("kept");
+  });
+
+  it("read gives up after exhausting retries and renders nothing", async () => {
+    const { client } = fakeBlob({ promos: seeded.promos });
+    const store = createPromoStore(client, flakyFetch(JSON.stringify(seeded), 99));
+    expect((await store.read()).promos).toHaveLength(0);
+  });
+
+  it("save REFUSES to write when the existing document cannot be read", async () => {
+    const { client, current } = fakeBlob({ promos: seeded.promos });
+    const store = createPromoStore(client, flakyFetch(JSON.stringify(seeded), 99));
+    await expect(store.save(promo({ id: "new", placement: "bar" }))).rejects.toThrow(/refusing to overwrite/i);
+    // the previously stored promo must still be there, untouched
+    expect(current().map((p) => p.id)).toEqual(["kept"]);
+  });
+
+  it("save still works when the store is genuinely empty", async () => {
+    const { client, fetchImpl, current } = fakeBlob();
+    await createPromoStore(client, fetchImpl).save(promo({ id: "first", placement: "bar" }));
+    expect(current().map((p) => p.id)).toEqual(["first"]);
+  });
+
+  it("clear also refuses when the document cannot be read", async () => {
+    const { client, current } = fakeBlob({ promos: seeded.promos });
+    const store = createPromoStore(client, flakyFetch(JSON.stringify(seeded), 99));
+    await expect(store.clear("section")).rejects.toThrow(/refusing to overwrite/i);
+    expect(current().map((p) => p.id)).toEqual(["kept"]);
+  });
+});
+
 describe("write", () => {
   it("never overwrites a pathname — each version is a new blob", async () => {
     const { client, fetchImpl, store } = fakeBlob();
