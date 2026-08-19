@@ -19,7 +19,7 @@ const promo = promos.find((p) => p.placement === placement) ?? null;
   <form id="promo-form" class="space-y-5" data-placement={placement} data-id={promo?.id ?? ""}>
     <label class="flex items-center gap-2">
       <input type="checkbox" name="enabled" checked={promo?.enabled ?? false} />
-      <span>Enabled — publishing this turns off any other {placement} promo</span>
+      <span>Enabled — show this promo on the site, subject to any schedule below</span>
     </label>
 
     <div>
@@ -43,7 +43,7 @@ const promo = promos.find((p) => p.placement === placement) ?? null;
       </div>
       <div>
         <span class="block text-sm mb-1">Preview</span>
-        <div id="preview" class="prose prose-invert rounded-md border border-neutral-800 p-3 min-h-[8rem] text-sm"></div>
+        <div id="preview" class="promo-preview rounded-md border border-neutral-800 p-3 min-h-[8rem] text-sm"></div>
       </div>
     </div>
 
@@ -100,6 +100,20 @@ const promo = promos.find((p) => p.placement === placement) ?? null;
     </div>
   </form>
 </AdminLayout>
+
+<style>
+  /* Tailwind's preflight removes list markers and paragraph spacing, and the
+     typography plugin is not installed — so the preview needs these rules to
+     match what the site actually renders from the same markdown. */
+  .promo-preview :global(p) { margin: 0 0 0.75em; }
+  .promo-preview :global(p:last-child) { margin-bottom: 0; }
+  .promo-preview :global(ul) { list-style: disc; padding-left: 1.25em; margin: 0 0 0.75em; }
+  .promo-preview :global(ol) { list-style: decimal; padding-left: 1.25em; margin: 0 0 0.75em; }
+  .promo-preview :global(li) { margin: 0.15em 0; }
+  .promo-preview :global(a) { text-decoration: underline; }
+  .promo-preview :global(strong) { font-weight: 700; }
+  .promo-preview :global(em) { font-style: italic; }
+</style>
 
 <script>
   import { marked } from "marked";
