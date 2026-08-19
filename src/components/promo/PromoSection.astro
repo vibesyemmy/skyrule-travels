@@ -1,0 +1,82 @@
+---
+import type { Promo } from "../../lib/promos/schema";
+interface Props { promo: Promo }
+const { promo } = Astro.props;
+---
+<section class="promo-section" data-promo-section data-promo-id={promo.id}>
+  <div class="promo-section_inner">
+    {promo.image && (
+      <img src={promo.image.url} alt={promo.image.alt}
+           width={promo.image.width} height={promo.image.height}
+           class="promo-section_image" />
+    )}
+    <div class="promo-section_copy">
+      {promo.eyebrow && <p class="promo-section_eyebrow">{promo.eyebrow}</p>}
+      <h2 class="promo-section_headline">{promo.headline}</h2>
+      <div class="promo-section_content" set:html={promo.bodyHtml} />
+      {promo.cta && (
+        <a href={promo.cta.href} class="promo-section_cta">
+          {promo.cta.label}
+        </a>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .promo-section {
+    background-color: #171717;
+    color: #f5f5f5;
+    font-family: Inter, Arial, sans-serif;
+  }
+  .promo-section_inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 4rem 1rem;
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  @media (min-width: 768px) {
+    .promo-section_inner {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .promo-section_image {
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    object-fit: cover;
+    display: block;
+  }
+  .promo-section_eyebrow {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--skyrule--green, #a3d346);
+    margin: 0 0 0.75rem;
+  }
+  .promo-section_headline {
+    font-size: 1.875rem;
+    font-weight: 600;
+    margin: 0 0 1rem;
+    line-height: 1.2;
+  }
+  .promo-section_content {
+    color: #d4d4d4;
+    line-height: 1.6;
+  }
+  .promo-section_content :global(a) {
+    color: var(--skyrule--green, #a3d346);
+  }
+  .promo-section_cta {
+    display: inline-block;
+    margin-top: 1.5rem;
+    border-radius: 0.5rem;
+    background-color: var(--skyrule--green, #a3d346);
+    color: var(--skyrule--ink, #1c2a05);
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    text-decoration: none;
+  }
+</style>

@@ -1,0 +1,32 @@
+---
+export const prerender = false;
+import "../../styles/admin.css";
+
+import { verifyToken } from "../../lib/auth/token";
+import { createSession } from "../../lib/auth/session";
+
+const secret = process.env.AUTH_SECRET;
+const token = Astro.url.searchParams.get("token") ?? "";
+
+if (secret && token) {
+  const payload = await verifyToken<{ email: string }>(token, secret);
+  if (payload?.email) {
+    await createSession(Astro.cookies, payload.email, secret);
+    return Astro.redirect("/admin");
+  }
+}
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Link expired — Skyrule admin</title>
+  </head>
+  <body class="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center p-6">
+    <main class="max-w-sm text-center">
+      <h1 class="text-xl font-semibold mb-2">This link has expired</h1>
+      <p class="text-sm text-neutral-400 mb-6">Sign-in links are valid for 15 minutes.</p>
+      <a href="/admin/login" class="text-lime-400 underline">Request a new one</a>
+    </main>
+  </body>
+</html>

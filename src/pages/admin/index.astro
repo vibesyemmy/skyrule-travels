@@ -1,0 +1,59 @@
+---
+export const prerender = false;
+
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { promoStore } from "../../lib/promos/store";
+import { isLive } from "../../lib/promos/resolve";
+import { utcIsoToWatLocal } from "../../lib/promos/datetime";
+import { PLACEMENTS, type Placement } from "../../lib/promos/schema";
+
+const LABELS: Record<Placement, string> = {
+  bar: "Announcement bar",
+  modal: "Entry modal",
+  section: "Homepage section",
+};
+
+const DESCRIPTIONS: Record<Placement, string> = {
+  bar: "A slim strip across the top of every page.",
+  modal: "A dialog shown once per visitor.",
+  section: "A full-width band on the homepage.",
+};
+
+const now = new Date();
+const { promos } = await promoStore.read();
+
+const slots = PLACEMENTS.map((placement) => {
+  const promo = promos.find((p) => p.placement === placement) ?? null;
+  let status = "Empty";
+  if (promo) {
+    if (!promo.enabled) status = "Draft";
+    else if (isLive(promo, now)) status = "Live";
+    else if (promo.startsAt && new Date(promo.startsAt) > now)
+      status = `Scheduled for ${utcIsoToWatLocal(promo.startsAt).replace("T", " ")}`;
+    else status = "Expired";
+  }
+  return { placement, promo, status };
+});
+---
+<AdminLayout title="Promos">
+  <h1 class="text-2xl font-semibold mb-1">Promos</h1>
+  <p class="text-neutral-400 mb-8">One promo can be live in each placement at a time.</p>
+
+  <ul class="space-y-3">
+    {slots.map(({ placement, promo, status }) => (
+      <li class="rounded-lg border border-neutral-800 p-4 flex items-center justify-between gap-4">
+        <div>
+          <p class="font-medium">{LABELS[placement]}</p>
+          <p class="text-sm text-neutral-500">{DESCRIPTIONS[placement]}</p>
+          {promo && <p class="text-sm text-neutral-300 mt-1">{promo.headline}</p>}
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <span class={`text-xs rounded-full px-2 py-1 ${status === "Live" ? "bg-lime-400 text-neutral-900" : "bg-neutral-800 text-neutral-300"}`}>
+            {status}
+          </span>
+          <a href={`/admin/${placement}`} class="text-sm underline">Edit</a>
+        </div>
+      </li>
+    ))}
+  </ul>
+</AdminLayout>

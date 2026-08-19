@@ -41,6 +41,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
 
   <link rel="stylesheet" href="/styles/drivelodge.css"/>
   <link rel="stylesheet" href="/styles/skyrule.css"/>
+  <link rel="stylesheet" href="/styles/promo.css"/>
 
   <!-- Font smoothing (from benchmark) — index.astro inlines its own copy of this rule -->
   <style is:global>*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-o-font-smoothing:antialiased;-webkit-appearance:none}</style>
@@ -98,6 +99,66 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
 
 </div></main>
 <Footer />
+
+<script>
+  (async () => {
+    try {
+      const active = await fetch("/api/promo/active").then((r) => r.json());
+
+      if (active.bar) {
+        const bar = document.createElement("div");
+        bar.className = "promo-bar";
+        bar.setAttribute("data-promo-bar", "");
+        bar.setAttribute("data-promo-id", active.bar.id);
+        bar.innerHTML = `<div class="promo-bar_inner">
+          ${active.bar.eyebrow ? `<span class="promo-bar_eyebrow">${active.bar.eyebrow}</span>` : ""}
+          <span class="promo-bar_headline">${active.bar.headline}</span>
+          ${active.bar.cta ? `<a href="${active.bar.cta.href}" class="promo-bar_cta">${active.bar.cta.label}</a>` : ""}
+        </div>`;
+        document.body.prepend(bar);
+
+        // Measure the bar's rendered height (it wraps to two lines on narrow
+        // screens) and push the fixed navbar down by that amount. See the
+        // matching rule in /styles/promo.css.
+        const measure = () => {
+          document.documentElement.style.setProperty("--promo-bar-height", `${bar.getBoundingClientRect().height}px`);
+        };
+        measure();
+        window.addEventListener("resize", measure);
+      }
+
+      // Dismissal is remembered per promo id, so closing it once suppresses
+      // it across pages while a new promo still appears.
+      if (active.modal && localStorage.getItem(`promo-dismissed-${active.modal.id}`) !== "1") {
+        const modal = document.createElement("div");
+        modal.className = "promo-modal_overlay";
+        modal.setAttribute("data-promo-modal", "");
+        modal.setAttribute("data-promo-id", active.modal.id);
+        modal.setAttribute("role", "dialog");
+        modal.setAttribute("aria-modal", "true");
+        modal.innerHTML = `<div class="promo-modal_card">
+          ${active.modal.image ? `<img src="${active.modal.image.url}" alt="${active.modal.image.alt}" width="${active.modal.image.width}" height="${active.modal.image.height}" class="promo-modal_image">` : ""}
+          <div class="promo-modal_body">
+            ${active.modal.eyebrow ? `<p class="promo-modal_eyebrow">${active.modal.eyebrow}</p>` : ""}
+            <h2 class="promo-modal_headline">${active.modal.headline}</h2>
+            <div class="promo-modal_content">${active.modal.bodyHtml}</div>
+            <div class="promo-modal_actions">
+              ${active.modal.cta ? `<a href="${active.modal.cta.href}" class="promo-modal_cta">${active.modal.cta.label}</a>` : ""}
+              <button type="button" data-promo-dismiss class="promo-modal_dismiss">No thanks</button>
+            </div>
+          </div>
+        </div>`;
+        modal.querySelector("[data-promo-dismiss]")?.addEventListener("click", () => {
+          localStorage.setItem(`promo-dismissed-${active.modal.id}`, "1");
+          modal.remove();
+        });
+        document.body.appendChild(modal);
+      }
+    } catch {
+      // A promo failure must never break the page it sits on.
+    }
+  })();
+</script>
 
 </body>
 </html>

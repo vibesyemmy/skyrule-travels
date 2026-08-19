@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 // Skyrule Landing — EXACT benchmark body, zero DOM changes
 // CSS loaded externally from /styles/drivelodge.css
 import Navbar from '../components/nav/Navbar.astro';
@@ -6,6 +8,21 @@ import Hero from '../components/hero/Hero.astro';
 import Footer from '../components/footer/Footer.astro';
 import Button from '../components/button/Button.astro';
 import ContactCta from '../components/contact/ContactCta.astro';
+import AnnouncementBar from '../components/promo/AnnouncementBar.astro';
+import PromoModal from '../components/promo/PromoModal.astro';
+import PromoSection from '../components/promo/PromoSection.astro';
+import { promoStore } from '../lib/promos/store';
+import { activeFor } from '../lib/promos/resolve';
+
+const now = new Date();
+const { promos } = await promoStore.read();
+const bar = activeFor(promos, "bar", now);
+const modal = activeFor(promos, "modal", now);
+const section = activeFor(promos, "section", now);
+
+// Cached at the edge so the homepage stays fast. A promo scheduled for a
+// given minute can therefore appear up to 60 seconds late, which is deliberate.
+Astro.response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
 ---
 
 <!DOCTYPE html>
@@ -94,6 +111,8 @@ body *{color:inherit}a,.w-input,.w-select,.w-tab-link,.w-nav-link,.w-slider-arro
 
 <main class="main-wrapper"><div class="scroll-wrapper">
 
+{bar && <AnnouncementBar promo={bar} />}
+
 <Navbar />
 
 <Hero />
@@ -117,10 +136,29 @@ body *{color:inherit}a,.w-input,.w-select,.w-tab-link,.w-nav-link,.w-slider-arro
 
 <header data-theme="dark" class="section_build-cta"><div class="padding-global"><div class="container-large"><div class="padding-section-large"><div class="build-cta_component"><div class="build-cta_header-wrap"><div data-wf--header-block--size="medium---centre" class="header-wrapper w-variant-ad828f27-e9ee-986a-b474-73e7a657278c"><div class="header-text-wrap"><div class="header-top"><h2 class="heading-style w-variant-ad828f27-e9ee-986a-b474-73e7a657278c">Travel with confidence</h2></div><p class="body-text">As travellers ourselves, we know peace of mind matters most. Every Skyrule trip comes with a named expert, transparent pricing, and support that answers — before, during and after you fly.</p></div><div class="button-group"><Button href="/contact" label="Plan your trip" icon={false} /></div></div></div></div></div></div></div></header>
 
+{section && <PromoSection promo={section} />}
+
 <ContactCta />
 
 </div></main>
+{modal && <PromoModal promo={modal} />}
 <Footer /></div>
+{modal && (
+  <script>
+    const modalEl = document.querySelector("[data-promo-modal]");
+    const id = modalEl?.getAttribute("data-promo-id");
+    if (modalEl && id) {
+      if (localStorage.getItem(`promo-dismissed-${id}`) === "1") {
+        modalEl.remove();
+      } else {
+        modalEl.querySelector("[data-promo-dismiss]")?.addEventListener("click", () => {
+          localStorage.setItem(`promo-dismissed-${id}`, "1");
+          modalEl.remove();
+        });
+      }
+    }
+  </script>
+)}
 <!-- ⬆ EXACT BENCHMARK BODY ⬆ -->
 
 <!-- JS Dependencies -->

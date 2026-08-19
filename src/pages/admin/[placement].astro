@@ -1,0 +1,207 @@
+---
+export const prerender = false;
+
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { promoStore } from "../../lib/promos/store";
+import { utcIsoToWatLocal } from "../../lib/promos/datetime";
+import { PLACEMENTS, type Placement } from "../../lib/promos/schema";
+
+const placement = Astro.params.placement as Placement;
+if (!PLACEMENTS.includes(placement)) return Astro.redirect("/admin");
+
+const { promos } = await promoStore.read();
+const promo = promos.find((p) => p.placement === placement) ?? null;
+---
+<AdminLayout title="Edit promo">
+  <a href="/admin" class="text-sm text-neutral-400 underline">Back</a>
+  <h1 class="text-2xl font-semibold mt-2 mb-6">Edit {placement} promo</h1>
+
+  <form id="promo-form" class="space-y-5" data-placement={placement} data-id={promo?.id ?? ""}>
+    <label class="flex items-center gap-2">
+      <input type="checkbox" name="enabled" checked={promo?.enabled ?? false} />
+      <span>Enabled — show this promo on the site, subject to any schedule below</span>
+    </label>
+
+    <div>
+      <label class="block text-sm mb-1" for="eyebrow">Eyebrow (optional)</label>
+      <input id="eyebrow" name="eyebrow" value={promo?.eyebrow ?? ""}
+             class="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2" />
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1" for="headline">Headline</label>
+      <input id="headline" name="headline" required value={promo?.headline ?? ""}
+             class="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2" />
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-3">
+      <div>
+        <label class="block text-sm mb-1" for="body">Body (markdown)</label>
+        <textarea id="body" name="body" rows="8"
+                  class="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2 font-mono text-sm">{promo?.body ?? ""}</textarea>
+        <p class="text-xs text-neutral-500 mt-1">Bold, italic, links and lists. Headings are stripped.</p>
+      </div>
+      <div>
+        <span class="block text-sm mb-1">Preview</span>
+        <div id="preview" class="promo-preview rounded-md border border-neutral-800 p-3 min-h-[8rem] text-sm"></div>
+      </div>
+    </div>
+
+    <fieldset class="border border-neutral-800 rounded-md p-4 space-y-3">
+      <legend class="text-sm px-1">Image</legend>
+      <input type="file" id="file" accept="image/jpeg,image/png,image/webp" />
+      <p id="upload-error" class="text-sm text-red-400 hidden"></p>
+      <img id="image-preview" src={promo?.image?.url ?? ""} alt=""
+           class={promo?.image ? "max-h-40 rounded" : "hidden max-h-40 rounded"} />
+      <div>
+        <label class="block text-sm mb-1" for="alt">Alt text (required with an image)</label>
+        <input id="alt" name="alt" value={promo?.image?.alt ?? ""}
+               class="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2" />
+      </div>
+      <input type="hidden" id="image-url" value={promo?.image?.url ?? ""} />
+      <input type="hidden" id="image-width" value={promo?.image?.width ?? ""} />
+      <input type="hidden" id="image-height" value={promo?.image?.height ?? ""} />
+    </fieldset>
+
+    <fieldset class="border border-neutral-800 rounded-md p-4 grid md:grid-cols-2 gap-3">
+      <legend class="text-sm px-1">Call to action (optional)</legend>
+      <div>
+        <label class="block text-sm mb-1" for="cta-label">Button label</label>
+        <input id="cta-label" value={promo?.cta?.label ?? ""}
+               class="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2" />
+      </div>
+      <div>
+        <label class="block text-sm mb-1" for="cta-href">Link</label>
+        <input id="cta-href" value={promo?.cta?.href ?? ""} placeholder="/contact"
+               class="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2" />
+      </div>
+    </fieldset>
+
+    <fieldset class="border border-neutral-800 rounded-md p-4 grid md:grid-cols-2 gap-3">
+      <legend class="text-sm px-1">Schedule — times are West Africa Time</legend>
+      <div>
+        <label class="block text-sm mb-1" for="startsAt">Starts (blank = immediately)</label>
+        <input id="startsAt" type="datetime-local" value={utcIsoToWatLocal(promo?.startsAt ?? null)}
+               class="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2" />
+      </div>
+      <div>
+        <label class="block text-sm mb-1" for="endsAt">Ends (blank = never)</label>
+        <input id="endsAt" type="datetime-local" value={utcIsoToWatLocal(promo?.endsAt ?? null)}
+               class="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2" />
+      </div>
+    </fieldset>
+
+    <p id="form-error" class="text-sm text-red-400 hidden"></p>
+    <p id="form-saved" class="text-sm text-lime-400 hidden">Saved.</p>
+
+    <div class="flex gap-3">
+      <button type="submit" class="rounded-md bg-lime-400 text-neutral-900 font-medium px-4 py-2">Save</button>
+      <button type="button" id="clear" class="rounded-md border border-neutral-700 px-4 py-2">Delete promo</button>
+    </div>
+  </form>
+</AdminLayout>
+
+<style>
+  /* Tailwind's preflight removes list markers and paragraph spacing, and the
+     typography plugin is not installed — so the preview needs these rules to
+     match what the site actually renders from the same markdown. */
+  .promo-preview :global(p) { margin: 0 0 0.75em; }
+  .promo-preview :global(p:last-child) { margin-bottom: 0; }
+  .promo-preview :global(ul) { list-style: disc; padding-left: 1.25em; margin: 0 0 0.75em; }
+  .promo-preview :global(ol) { list-style: decimal; padding-left: 1.25em; margin: 0 0 0.75em; }
+  .promo-preview :global(li) { margin: 0.15em 0; }
+  .promo-preview :global(a) { text-decoration: underline; }
+  .promo-preview :global(strong) { font-weight: 700; }
+  .promo-preview :global(em) { font-style: italic; }
+</style>
+
+<script>
+  import { marked } from "marked";
+
+  const form = document.getElementById("promo-form") as HTMLFormElement;
+  const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+  const el = (id: string) => document.getElementById(id)!;
+
+  // Live preview. This parser only ever runs inside the admin — the public
+  // site is served pre-rendered HTML.
+  const bodyField = el("body") as HTMLTextAreaElement;
+  const paint = () => { el("preview").innerHTML = marked.parse(bodyField.value, { async: false }) as string; };
+  bodyField.addEventListener("input", paint);
+  paint();
+
+  // Dimensions are measured here so the renderers can set width/height and
+  // stop the image from shifting surrounding content as it loads.
+  el("file").addEventListener("change", async (event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const error = el("upload-error");
+    error.classList.add("hidden");
+
+    const bitmap = await createImageBitmap(file);
+    const data = new FormData();
+    data.append("file", file);
+    data.append("width", String(bitmap.width));
+    data.append("height", String(bitmap.height));
+
+    const response = await fetch("/api/admin/upload", { method: "POST", body: data });
+    const result = await response.json();
+    if (!result.ok) {
+      error.textContent = result.error;
+      error.classList.remove("hidden");
+      return;
+    }
+    (el("image-url") as HTMLInputElement).value = result.url;
+    (el("image-width") as HTMLInputElement).value = String(result.width);
+    (el("image-height") as HTMLInputElement).value = String(result.height);
+    const preview = el("image-preview") as HTMLImageElement;
+    preview.src = result.url;
+    preview.classList.remove("hidden");
+  });
+
+  async function send(payload: Record<string, unknown>) {
+    const error = el("form-error");
+    const saved = el("form-saved");
+    error.classList.add("hidden");
+    saved.classList.add("hidden");
+
+    const response = await fetch("/api/admin/promo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    if (!result.ok) {
+      // The form keeps its values — a failed save must never lose typed copy.
+      error.textContent = result.error;
+      error.classList.remove("hidden");
+      return false;
+    }
+    saved.classList.remove("hidden");
+    return true;
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await send({
+      id: form.dataset.id,
+      placement: form.dataset.placement,
+      enabled: (form.elements.namedItem("enabled") as HTMLInputElement).checked,
+      eyebrow: val("eyebrow"),
+      headline: val("headline"),
+      body: bodyField.value,
+      image: val("image-url")
+        ? { url: val("image-url"), alt: val("alt"), width: val("image-width"), height: val("image-height") }
+        : null,
+      cta: val("cta-label") || val("cta-href") ? { label: val("cta-label"), href: val("cta-href") } : null,
+      startsAt: val("startsAt"),
+      endsAt: val("endsAt"),
+    });
+  });
+
+  el("clear").addEventListener("click", async () => {
+    if (!confirm("Delete this promo? This cannot be undone.")) return;
+    if (await send({ placement: form.dataset.placement, action: "clear" })) {
+      window.location.href = "/admin";
+    }
+  });
+</script>

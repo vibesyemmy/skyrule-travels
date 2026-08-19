@@ -9,7 +9,7 @@
 // Without SMTP_HOST the endpoint runs in DRY-RUN mode: it logs the composed
 // email and reports success, so local dev works without credentials.
 import type { APIRoute } from "astro";
-import nodemailer from "nodemailer";
+import { createTransport, fromAddress } from "../../lib/mail";
 
 export const prerender = false;
 
@@ -107,7 +107,7 @@ ${fields
   const env = process.env;
   const mail = {
     to: env.MAIL_TO || "enquiries@skyruletravels.com",
-    from: env.MAIL_FROM || env.SMTP_USER || "no-reply@skyruletravels.com",
+    from: fromAddress(),
     replyTo: `${personName} <${email}>`,
     subject,
     text,
@@ -115,18 +115,13 @@ ${fields
   };
 
   try {
-    if (!env.SMTP_HOST) {
+    const transporter = createTransport();
+    if (!transporter) {
       // DRY RUN — no SMTP configured (local dev): log instead of sending.
       console.log("[enquiry] DRY RUN (no SMTP_HOST configured) — would send:\n" +
         `  To: ${mail.to}\n  Reply-To: ${mail.replyTo}\n  Subject: ${subject}\n${text.replace(/^/gm, "  ")}`);
       return json(200, { ok: true, dryRun: true });
     }
-    const transporter = nodemailer.createTransport({
-      host: env.SMTP_HOST,
-      port: Number(env.SMTP_PORT || 587),
-      secure: Number(env.SMTP_PORT || 587) === 465,
-      auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
-    });
     try {
       await transporter.sendMail(mail);
     } catch (err: any) {
