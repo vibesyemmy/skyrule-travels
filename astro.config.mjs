@@ -26,6 +26,14 @@ export default defineConfig({
   integrations: [react()],
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+
+    ssr: {
+      // sanitize-html is CommonJS and require()s htmlparser2, which is ESM-only
+      // from v12 — so the externalised dependency throws ERR_REQUIRE_ESM inside
+      // the deployed serverless function while working fine in dev, where Vite
+      // transforms it. Bundling it instead resolves the require at build time.
+      noExternal: ['sanitize-html'],
+    },
   }
 });
