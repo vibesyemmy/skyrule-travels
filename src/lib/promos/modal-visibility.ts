@@ -7,7 +7,7 @@
  */
 
 /** Wait before showing, so the modal never interrupts on first paint. */
-export const MODAL_DELAY_MS = 6000;
+export const MODAL_DELAY_MS = 4000;
 
 /** Or show earlier once the visitor has scrolled this far — engagement beats a timer. */
 export const MODAL_SCROLL_FRACTION = 0.4;
