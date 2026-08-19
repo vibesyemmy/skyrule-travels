@@ -3,9 +3,9 @@ import type { Promo } from "../../lib/promos/schema";
 interface Props { promo: Promo }
 const { promo } = Astro.props;
 ---
-<div class="promo-modal_overlay"
+<div class="promo-modal_overlay" hidden
      data-promo-modal data-promo-id={promo.id} role="dialog" aria-modal="true"
-     aria-label={promo.headline}>
+     aria-labelledby={`promo-modal-title-${promo.id}`}>
   <div class="promo-modal_card">
     {promo.image && (
       <img src={promo.image.url} alt={promo.image.alt}
@@ -14,11 +14,11 @@ const { promo } = Astro.props;
     )}
     <div class="promo-modal_body">
       {promo.eyebrow && <p class="promo-modal_eyebrow">{promo.eyebrow}</p>}
-      <h2 class="promo-modal_headline">{promo.headline}</h2>
+      <h2 class="promo-modal_headline" id={`promo-modal-title-${promo.id}`}>{promo.headline}</h2>
       <div class="promo-modal_content" set:html={promo.bodyHtml} />
       <div class="promo-modal_actions">
         {promo.cta && (
-          <a href={promo.cta.href} class="promo-modal_cta">
+          <a href={promo.cta.href} data-promo-cta class="promo-modal_cta">
             {promo.cta.label}
           </a>
         )}
@@ -31,6 +31,8 @@ const { promo } = Astro.props;
 </div>
 
 <style>
+  .promo-modal_overlay[hidden] { display: none; }
+
   .promo-modal_overlay {
     position: fixed;
     inset: 0;
@@ -104,3 +106,11 @@ const { promo } = Astro.props;
     cursor: pointer;
   }
 </style>
+
+<script>
+  import { initPromoModal } from "../../lib/promos/modal-controller";
+
+  const modal = document.querySelector<HTMLElement>("[data-promo-modal]");
+  const promoId = modal?.dataset.promoId;
+  if (modal && promoId) initPromoModal(modal, promoId);
+</script>

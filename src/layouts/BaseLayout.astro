@@ -101,6 +101,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
 <Footer />
 
 <script>
+  import { initPromoModal } from "../lib/promos/modal-controller";
+
   (async () => {
     try {
       const active = await fetch("/api/promo/active").then((r) => r.json());
@@ -129,30 +131,33 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
 
       // Dismissal is remembered per promo id, so closing it once suppresses
       // it across pages while a new promo still appears.
-      if (active.modal && localStorage.getItem(`promo-dismissed-${active.modal.id}`) !== "1") {
+      if (active.modal) {
         const modal = document.createElement("div");
         modal.className = "promo-modal_overlay";
         modal.setAttribute("data-promo-modal", "");
         modal.setAttribute("data-promo-id", active.modal.id);
         modal.setAttribute("role", "dialog");
         modal.setAttribute("aria-modal", "true");
+        modal.setAttribute("aria-labelledby", `promo-modal-title-${active.modal.id}`);
+        modal.hidden = true;
         modal.innerHTML = `<div class="promo-modal_card">
           ${active.modal.image ? `<img src="${active.modal.image.url}" alt="${active.modal.image.alt}" width="${active.modal.image.width}" height="${active.modal.image.height}" class="promo-modal_image">` : ""}
           <div class="promo-modal_body">
             ${active.modal.eyebrow ? `<p class="promo-modal_eyebrow">${active.modal.eyebrow}</p>` : ""}
-            <h2 class="promo-modal_headline">${active.modal.headline}</h2>
+            <h2 class="promo-modal_headline" id="promo-modal-title-${active.modal.id}">${active.modal.headline}</h2>
             <div class="promo-modal_content">${active.modal.bodyHtml}</div>
             <div class="promo-modal_actions">
-              ${active.modal.cta ? `<a href="${active.modal.cta.href}" class="promo-modal_cta">${active.modal.cta.label}</a>` : ""}
+              ${active.modal.cta ? `<a href="${active.modal.cta.href}" data-promo-cta class="promo-modal_cta">${active.modal.cta.label}</a>` : ""}
               <button type="button" data-promo-dismiss class="promo-modal_dismiss">No thanks</button>
             </div>
           </div>
         </div>`;
-        modal.querySelector("[data-promo-dismiss]")?.addEventListener("click", () => {
-          localStorage.setItem(`promo-dismissed-${active.modal.id}`, "1");
-          modal.remove();
-        });
+        // Same controller as the server-rendered homepage modal, so trigger
+        // timing, the frequency cap and keyboard handling match exactly.
+        // Append before initialising: the controller removes the element when
+        // the modal is not eligible, and remove() on a detached node is a no-op.
         document.body.appendChild(modal);
+        initPromoModal(modal, active.modal.id);
       }
     } catch {
       // A promo failure must never break the page it sits on.
