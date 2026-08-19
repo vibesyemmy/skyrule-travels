@@ -71,8 +71,17 @@ export function createPromoStore(client: BlobClient, fetchImpl: typeof fetch) {
     try {
       const { blobs } = await client.list({ prefix: DOC_PREFIX, limit: 100 });
       if (blobs.length === 0) return EMPTY();
-      return (await fetchDocument(newestFirst(blobs)[0].url)) ?? EMPTY();
-    } catch {
+      const document = await fetchDocument(newestFirst(blobs)[0].url);
+      if (!document) {
+        // Degrading quietly is correct for a visitor, but it must not be
+        // invisible to us: an unexplained "no promos" is otherwise
+        // indistinguishable from none being configured.
+        console.error("[promos] document could not be fetched after retries — rendering no promos");
+        return EMPTY();
+      }
+      return document;
+    } catch (error) {
+      console.error("[promos] blob store unreachable — rendering no promos:", error);
       return EMPTY();
     }
   }
