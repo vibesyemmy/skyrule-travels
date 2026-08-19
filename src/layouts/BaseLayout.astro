@@ -8,8 +8,18 @@ import Footer from "../components/footer/Footer.astro";
 
 interface Props {
   navbarStartScrolled?: boolean;
+  /** Page title. Defaults to the site-wide title. */
+  title?: string;
+  /** Meta description. Defaults to the site-wide description. */
+  description?: string;
 }
-const { navbarStartScrolled = false } = Astro.props;
+const {
+  navbarStartScrolled = false,
+  title = "Skyrule Travels | Flights, Hotels & Visa Assistance",
+  description = "Skyrule Travels is a Lagos-based, IATA-accredited travel agency arranging flights, hotels, visas, packages and airport pick-ups.",
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
 ---
 
 <!doctype html>
@@ -18,12 +28,16 @@ const { navbarStartScrolled = false } = Astro.props;
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="/favicon.png" />
-  <title>Skyrule — Premium Camper Van Roof Conversions</title>
-  <meta name="description" content="Skyrule designs, manufactures, and installs premium elevating roofs for camper van conversions. Built in the UK." />
-  <meta property="og:title" content="Skyrule — Premium Camper Van Roof Conversions" />
-  <meta property="og:description" content="Skyrule designs, manufactures, and installs premium elevating roofs for camper van conversions." />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
 
   <link rel="stylesheet" href="/styles/drivelodge.css"/>
   <link rel="stylesheet" href="/styles/skyrule.css"/>
