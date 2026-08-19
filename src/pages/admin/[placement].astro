@@ -49,10 +49,46 @@ const promo = promos.find((p) => p.placement === placement) ?? null;
 
     <fieldset class="border border-neutral-800 rounded-md p-4 space-y-3">
       <legend class="text-sm px-1">Image</legend>
-      <input type="file" id="file" accept="image/jpeg,image/png,image/webp" />
-      <p id="upload-error" class="text-sm text-red-400 hidden"></p>
-      <img id="image-preview" src={promo?.image?.url ?? ""} alt=""
-           class={promo?.image ? "max-h-40 rounded" : "hidden max-h-40 rounded"} />
+
+      <div id="dropzone" role="button" tabindex="0"
+           aria-label="Add an image"
+           aria-describedby="dropzone-hint"
+           class="rounded-lg border-2 border-dashed border-neutral-700 bg-neutral-900/40 px-4 py-6 cursor-pointer transition-colors hover:border-neutral-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400">
+
+        <div id="dropzone-empty" class="flex flex-col items-center gap-2 text-center" hidden={Boolean(promo?.image)}>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-neutral-500">
+            <path d="M12 16V4m0 0L8 8m4-4 4 4" />
+            <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" />
+          </svg>
+          <p class="text-sm">
+            <span class="font-medium text-lime-400 underline">Choose an image</span><span class="text-neutral-400"> or drag one here</span>
+          </p>
+          <p id="dropzone-hint" class="text-xs text-neutral-500">JPEG, PNG or WebP, up to 5MB. You can also paste one.</p>
+        </div>
+
+        <div id="dropzone-filled" class="flex flex-col sm:flex-row items-center gap-4 text-left" hidden={!promo?.image}>
+          <img id="image-preview" src={promo?.image?.url ?? ""} alt=""
+               class="h-20 w-20 shrink-0 rounded object-cover bg-neutral-800" />
+          <div class="min-w-0 flex-1">
+            <p id="image-name" class="truncate text-sm">Current image</p>
+            <p id="image-meta" class="text-xs text-neutral-500">
+              {promo?.image ? `${promo.image.width} x ${promo.image.height}` : ""}
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" id="image-replace"
+                    class="rounded-md border border-neutral-700 px-3 py-1.5 text-sm hover:border-neutral-500">Replace</button>
+            <button type="button" id="image-remove"
+                    class="rounded-md border border-neutral-700 px-3 py-1.5 text-sm text-red-300 hover:border-red-400">Remove</button>
+          </div>
+        </div>
+
+        <p id="dropzone-uploading" class="text-center text-sm text-neutral-300" hidden>Uploading…</p>
+      </div>
+
+      <input type="file" id="file" accept="image/jpeg,image/png,image/webp" class="sr-only" tabindex="-1" />
+      <p id="upload-error" role="alert" class="text-sm text-red-400" hidden></p>
       <div>
         <label class="block text-sm mb-1" for="alt">Alt text (required with an image)</label>
         <input id="alt" name="alt" value={promo?.image?.alt ?? ""}
@@ -102,6 +138,19 @@ const promo = promos.find((p) => p.placement === placement) ?? null;
 </AdminLayout>
 
 <style>
+  /* Tailwind's flex utility would otherwise override [hidden]'s display:none. */
+  #dropzone-empty[hidden],
+  #dropzone-filled[hidden],
+  #dropzone-uploading[hidden],
+  #upload-error[hidden] { display: none; }
+
+  #dropzone.is-dragging {
+    border-color: #a3d346;
+    background-color: rgba(163, 211, 70, 0.08);
+  }
+</style>
+
+<style>
   /* Tailwind's preflight removes list markers and paragraph spacing, and the
      typography plugin is not installed — so the preview needs these rules to
      match what the site actually renders from the same markdown. */
@@ -117,6 +166,7 @@ const promo = promos.find((p) => p.placement === placement) ?? null;
 
 <script>
   import { marked } from "marked";
+  import { validateUpload } from "../../lib/promos/image";
 
   const form = document.getElementById("promo-form") as HTMLFormElement;
   const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
@@ -131,32 +181,166 @@ const promo = promos.find((p) => p.placement === placement) ?? null;
 
   // Dimensions are measured here so the renderers can set width/height and
   // stop the image from shifting surrounding content as it loads.
-  el("file").addEventListener("change", async (event) => {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-    const error = el("upload-error");
-    error.classList.add("hidden");
+  // ---- image drop zone -------------------------------------------------
+  const dropzone = el("dropzone");
+  const fileInput = el("file") as HTMLInputElement;
+  const zoneEmpty = el("dropzone-empty");
+  const zoneFilled = el("dropzone-filled");
+  const zoneUploading = el("dropzone-uploading");
+  const uploadError = el("upload-error");
+  const altField = el("alt") as HTMLInputElement;
 
-    const bitmap = await createImageBitmap(file);
-    const data = new FormData();
-    data.append("file", file);
-    data.append("width", String(bitmap.width));
-    data.append("height", String(bitmap.height));
+  const hasImage = () => Boolean((el("image-url") as HTMLInputElement).value);
 
-    const response = await fetch("/api/admin/upload", { method: "POST", body: data });
-    const result = await response.json();
-    if (!result.ok) {
-      error.textContent = result.error;
-      error.classList.remove("hidden");
+  const formatBytes = (bytes: number) =>
+    bytes >= 1024 * 1024 ? `${(bytes / (1024 * 1024)).toFixed(1)}MB` : `${Math.max(1, Math.round(bytes / 1024))}KB`;
+
+  function render(state: "empty" | "filled" | "uploading") {
+    zoneEmpty.hidden = state !== "empty";
+    zoneFilled.hidden = state !== "filled";
+    zoneUploading.hidden = state !== "uploading";
+    // Alt text is required by the server whenever an image is set; mirroring it
+    // here means the browser catches it before a round trip.
+    altField.required = state === "filled";
+    dropzone.setAttribute("aria-label", state === "filled" ? "Replace the image" : "Add an image");
+  }
+
+  function showError(message: string) {
+    uploadError.textContent = message;
+    uploadError.hidden = false;
+  }
+
+  /**
+   * Read an image's pixel dimensions.
+   *
+   * Uses an object URL and <img> rather than createImageBitmap: the latter
+   * rejects files this browser renders perfectly well (observed failing with
+   * InvalidStateError on a valid PNG), which blocked the upload entirely and
+   * reported a misleading "could not be read as an image". createImageBitmap
+   * stays as a fallback for anything <img> cannot decode.
+   */
+  function measureImage(file: File): Promise<{ width: number; height: number }> {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        createImageBitmap(file)
+          .then((bitmap) => resolve({ width: bitmap.width, height: bitmap.height }))
+          .catch(reject);
+      };
+      img.src = url;
+    });
+  }
+
+  async function handleFile(file: File) {
+    uploadError.hidden = true;
+
+    // Same rules the endpoint enforces — checked here purely for instant feedback.
+    const problem = validateUpload(file.type, file.size);
+    if (problem) {
+      showError(problem);
       return;
     }
-    (el("image-url") as HTMLInputElement).value = result.url;
-    (el("image-width") as HTMLInputElement).value = String(result.width);
-    (el("image-height") as HTMLInputElement).value = String(result.height);
-    const preview = el("image-preview") as HTMLImageElement;
-    preview.src = result.url;
-    preview.classList.remove("hidden");
+
+    render("uploading");
+    try {
+      const { width, height } = await measureImage(file);
+      const data = new FormData();
+      data.append("file", file);
+      data.append("width", String(width));
+      data.append("height", String(height));
+
+      const response = await fetch("/api/admin/upload", { method: "POST", body: data });
+      const result = await response.json();
+      if (!result.ok) {
+        showError(result.error);
+        render(hasImage() ? "filled" : "empty");
+        return;
+      }
+
+      (el("image-url") as HTMLInputElement).value = result.url;
+      (el("image-width") as HTMLInputElement).value = String(result.width);
+      (el("image-height") as HTMLInputElement).value = String(result.height);
+      (el("image-preview") as HTMLImageElement).src = result.url;
+      el("image-name").textContent = file.name;
+      el("image-meta").textContent = `${result.width} x ${result.height} · ${formatBytes(file.size)}`;
+      render("filled");
+      if (!altField.value.trim()) altField.focus();
+    } catch {
+      showError("That file could not be read as an image. Try a different one.");
+      render(hasImage() ? "filled" : "empty");
+    }
+  }
+
+  const browse = () => fileInput.click();
+
+  dropzone.addEventListener("click", (event) => {
+    // The Replace/Remove buttons handle their own clicks.
+    if ((event.target as HTMLElement).closest("button")) return;
+    browse();
   });
+
+  dropzone.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      browse();
+    }
+  });
+
+  el("image-replace").addEventListener("click", browse);
+
+  el("image-remove").addEventListener("click", () => {
+    for (const id of ["image-url", "image-width", "image-height"]) (el(id) as HTMLInputElement).value = "";
+    fileInput.value = "";
+    (el("image-preview") as HTMLImageElement).removeAttribute("src");
+    uploadError.hidden = true;
+    render("empty");
+  });
+
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files?.[0];
+    if (file) handleFile(file);
+  });
+
+  for (const type of ["dragenter", "dragover"]) {
+    dropzone.addEventListener(type, (event) => {
+      event.preventDefault();
+      dropzone.classList.add("is-dragging");
+    });
+  }
+  for (const type of ["dragleave", "dragend"]) {
+    dropzone.addEventListener(type, () => dropzone.classList.remove("is-dragging"));
+  }
+
+  dropzone.addEventListener("drop", (event) => {
+    event.preventDefault();
+    dropzone.classList.remove("is-dragging");
+    const file = (event as DragEvent).dataTransfer?.files?.[0];
+    if (file) handleFile(file);
+  });
+
+  // A file dropped outside the zone would otherwise navigate away from the
+  // half-filled form, losing whatever the client had typed.
+  for (const type of ["dragover", "drop"]) {
+    window.addEventListener(type, (event) => {
+      if (!(event.target as HTMLElement)?.closest?.("#dropzone")) event.preventDefault();
+    });
+  }
+
+  dropzone.addEventListener("paste", (event) => {
+    const file = (event as ClipboardEvent).clipboardData?.files?.[0];
+    if (file) {
+      event.preventDefault();
+      handleFile(file);
+    }
+  });
+
+  render(hasImage() ? "filled" : "empty");
 
   async function send(payload: Record<string, unknown>) {
     const error = el("form-error");
