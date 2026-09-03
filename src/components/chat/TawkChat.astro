@@ -1,0 +1,28 @@
+---
+// Tawk.to live-chat widget, included on every page (both shells:
+// BaseLayout.astro and the standalone index.astro).
+//
+// TAWK_SRC comes from the tawk.to dashboard: Administration -> Channels ->
+// Chat Widget -> "Direct Chat Link" / embed code, in the form
+//   https://embed.tawk.to/<propertyId>/<widgetId>
+// These IDs are public (they ship in the page source), not secrets.
+//
+// Until the real IDs are pasted below, the component renders NOTHING, so it
+// is safe to deploy inert.
+const TAWK_SRC = ""; // e.g. "https://embed.tawk.to/68b8f.../1j4abc..."
+---
+{TAWK_SRC && (
+  <script is:inline define:vars={{ TAWK_SRC }}>
+    window.Tawk_API = window.Tawk_API || {};
+    window.Tawk_LoadStart = new Date();
+    (function () {
+      var s1 = document.createElement("script");
+      var s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = TAWK_SRC;
+      s1.charset = "UTF-8";
+      s1.setAttribute("crossorigin", "*");
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+)}

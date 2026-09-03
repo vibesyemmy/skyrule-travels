@@ -5,6 +5,7 @@
 // logo/links stay visible at the top (see Navbar.astro's startScrolled).
 import Navbar from "../components/nav/Navbar.astro";
 import Footer from "../components/footer/Footer.astro";
+import TawkChat from "../components/chat/TawkChat.astro";
 
 interface Props {
   navbarStartScrolled?: boolean;
@@ -165,5 +166,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
   })();
 </script>
 
+<TawkChat />
 </body>
 </html>

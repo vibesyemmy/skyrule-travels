@@ -9,6 +9,7 @@ import Footer from '../components/footer/Footer.astro';
 import Button from '../components/button/Button.astro';
 import ContactCta from '../components/contact/ContactCta.astro';
 import AnnouncementBar from '../components/promo/AnnouncementBar.astro';
+import TawkChat from '../components/chat/TawkChat.astro';
 import PromoModal from '../components/promo/PromoModal.astro';
 import PromoSection from '../components/promo/PromoSection.astro';
 import { promoStore } from '../lib/promos/store';
@@ -243,5 +244,6 @@ document.querySelectorAll("[data-video-url]").forEach((trigger) => {
   });
 });
 </script>
+<TawkChat />
 </body>
 </html>
